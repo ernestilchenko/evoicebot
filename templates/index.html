@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuAlert VoiceBot - Automatyczne przypomnienia o dokumentach</title>
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #34a853;
+            --dark-color: #1f2937;
+            --light-color: #f9fafb;
+            --gray-color: #9ca3af;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .hero {
+            padding: 4rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: white;
+            color: var(--primary-color);
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .features {
+            padding: 5rem 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--dark-color);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+        
+        .how-it-works {
+            padding: 5rem 0;
+            background-color: var(--light-color);
+        }
+        
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .step {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+        
+        .testimonials {
+            padding: 5rem 0;
+            background-color: white;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .testimonial-card {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            color: var(--dark-color);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--gray-color);
+        }
+        
+        .author-name {
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+        
+        .author-position {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        .cta-section {
+            padding: 5rem 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            text-align: center;
+            color: white;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: var(--gray-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .step {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="hero">
+                <h1>DocuAlert VoiceBot</h1>
+                <p>Automatyczny system powiadamiania głosowego o terminach ważności dokumentów. Nigdy więcej kar za przeterminowane dokumenty i uprawnienia.</p>
+                <a href="#kontakt" class="cta-button">Rozpocznij teraz</a>
+            </div>
+        </div>
+    </header>
+    
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Dlaczego DocuAlert VoiceBot?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📞</div>
+                    <h3 class="feature-title">Powiadomienia głosowe</h3>
+                    <p>Automatyczne połączenia głosowe przypominające o terminie ważności dokumentów, zamiast łatwych do przeoczenia powiadomień w aplikacji.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Zarządzanie dokumentami</h3>
+                    <p>System bazy danych monitorujący terminy ważności dokumentów i uprawnień pracowników.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <h3 class="feature-title">Terminowe przypomnienia</h3>
+                    <p>Powiadomienia w odpowiednim czasie, aby uniknąć kar za brak aktualnych dokumentów.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3 class="feature-title">Dla zespołów każdej wielkości</h3>
+                    <p>Skalowalne rozwiązanie dla małych firm i dużych przedsiębiorstw z wieloma pracownikami.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3 class="feature-title">Bramka VoIP</h3>
+                    <p>Wykorzystanie nowoczesnej technologii VoIP do wykonywania połączeń głosowych w sposób efektywny kosztowo.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Bezpieczeństwo danych</h3>
+                    <p>Pełne zabezpieczenie wrażliwych danych pracowników i dokumentów firmowych.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Jak to działa?</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Wprowadzenie dokumentów</h3>
+                        <p>Wprowadź do systemu informacje o dokumentach i uprawnieniach pracowników wraz z datami ich ważności.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Automatyczne monitorowanie</h3>
+                        <p>System automatycznie monitoruje zbliżające się terminy ważności dokumentów i identyfikuje te, które wymagają aktualizacji.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Powiadomienia głosowe</h3>
+                        <p>VoiceBot automatycznie dzwoni do pracowników, przypominając im o konieczności aktualizacji dokumentów w określonym terminie.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Śledzenie postępów</h3>
+                        <p>System śledzi status aktualizacji dokumentów i w razie potrzeby generuje powtórne przypomnienia.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Raportowanie</h3>
+                        <p>Generowanie raportów dla zarządzających o statusie dokumentów i uprawnień w firmie.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Co mówią nasi klienci</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Po wdrożeniu DocuAlert VoiceBot liczba kar za przeterminowane dokumenty spadła do zera. Pracownicy doceniają głosowe przypomnienia, które są trudniejsze do zignorowania niż powiadomienia w aplikacji."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div>
+                            <div class="author-name">Anna Kowalska</div>
+                            <div class="author-position">Kierownik HR, Firma Budowlana</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"System jest niezwykle intuicyjny w obsłudze, a jego wdrożenie zajęło nam zaledwie jeden dzień. Teraz mam pewność, że wszyscy nasi kierowcy mają aktualne uprawnienia."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div>
+                            <div class="author-name">Marcin Nowak</div>
+                            <div class="author-position">Dyrektor Operacyjny, Firma Transportowa</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"DocuAlert pomógł nam uporządkować proces zarządzania szkoleniami BHP i badaniami lekarskimi. Powiadomienia głosowe są kluczowe - pracownicy produkcyjni często nie sprawdzają maili czy aplikacji."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"></div>
+                        <div>
+                            <div class="author-name">Piotr Wiśniewski</div>
+                            <div class="author-position">Specjalista BHP, Zakład Produkcyjny</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta-section" id="kontakt">
+        <div class="container">
+            <h2>Gotowy na wdrożenie DocuAlert VoiceBot?</h2>
+            <p>Skontaktuj się z nami już dziś, aby dowiedzieć się, jak możemy pomóc Twojej firmie w zarządzaniu dokumentami i uniknięciu kar.</p>
+            <a href="mailto:kontakt@voicebot.fun" class="cta-button">Skontaktuj się z nami</a>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">DocuAlert VoiceBot</div>
+                    <p>Automatyczny system powiadamiania głosowego o terminach ważności dokumentów.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Szybkie linki</h3>
+                    <ul>
+                        <li><a href="#">Strona główna</a></li>
+                        <li><a href="#">O nas</a></li>
+                        <li><a href="#">Funkcje</a></li>
+                        <li><a href="#">Cennik</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Kontakt</h3>
+                    <ul>
+                        <li><a href="mailto:kontakt@voicebot.fun">kontakt@voicebot.fun</a></li>
+                        <li><a href="tel:+48123456789">+48 123 456 789</a></li>
+                        <li>ul. Przykładowa 123</li>
+                        <li>00-000 Warszawa</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 DocuAlert VoiceBot. Wszelkie prawa zastrzeżone.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
