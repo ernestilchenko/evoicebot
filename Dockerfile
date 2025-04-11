@@ -44,5 +44,5 @@ RUN adduser --disabled-password --gecos '' djangouser
 RUN chown -R djangouser:djangouser /app
 USER djangouser
 
-# Run application
-CMD ["gunicorn", "evoicebot.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Run application with Django's development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
