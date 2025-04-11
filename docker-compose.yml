@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: gunicorn evoicebot.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-l2)*ifxw)j)h5e!0)^!)7zsas)k6a#bg^x(m$$w@_ao80-tp@3
+    restart: always
+
+volumes:
+  static_volume:
