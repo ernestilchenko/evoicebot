@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DocuAlert VoiceBot - Automatyczne przypomnienia o dokumentach{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Login Popup -->
+    <div id="loginPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3>Zaloguj się</h3>
+                <span class="close-popup">&times;</span>
+            </div>
+            <form class="login-form" method="post" action="#">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Nazwa użytkownika lub email</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Hasło</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Zapamiętaj mnie</label>
+                    </div>
+                    <a href="#" class="forgot-password">Zapomniałeś hasła?</a>
+                </div>
+                <button type="submit" class="login-button">Zaloguj się</button>
+                <div class="separator">
+                    <span>lub</span>
+                </div>
+                <button type="button" class="google-button">
+                    <span class="google-icon">G</span>
+                    <span>Zaloguj się przez Google</span>
+                </button>
+                <div class="register-link">
+                    <p>Nie masz konta? <a href="#" id="showRegister">Zarejestruj się</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Register Popup -->
+    <div id="registerPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3>Zarejestruj się</h3>
+                <span class="close-popup">&times;</span>
+            </div>
+            <form class="login-form" method="post" action="#">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="reg-username">Nazwa użytkownika</label>
+                    <input type="text" id="reg-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Hasło</label>
+                    <input type="password" id="reg-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm-password">Potwierdź hasło</label>
+                    <input type="password" id="reg-confirm-password" name="confirm_password" required>
+                </div>
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">Akceptuję <a href="#">regulamin</a> i <a href="#">politykę prywatności</a></label>
+                    </div>
+                </div>
+                <button type="submit" class="login-button">Zarejestruj się</button>
+                <div class="separator">
+                    <span>lub</span>
+                </div>
+                <button type="button" class="google-button">
+                    <span class="google-icon">G</span>
+                    <span>Zarejestruj się przez Google</span>
+                </button>
+                <div class="register-link">
+                    <p>Masz już konto? <a href="#" id="showLogin">Zaloguj się</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">DocuAlert VoiceBot</div>
+                <div class="nav-buttons">
+                    <a href="#" class="nav-button" id="loginButton">Sign In</a>
+                    <a href="#" class="nav-button" id="registerButton">Sign Up</a>
+                </div>
+            </nav>
+            <div class="hero">
+                <h1>DocuAlert VoiceBot</h1>
+                <p>Automatyczny system powiadamiania głosowego o terminach ważności dokumentów. Nigdy więcej kar za przeterminowane dokumenty i uprawnienia.</p>
+                <a href="#kontakt" class="cta-button">Rozpocznij teraz</a>
+            </div>
+        </div>
+    </header>
+    
+    {% block content %}
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Dlaczego DocuAlert VoiceBot?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📞</div>
+                    <h3 class="feature-title">Powiadomienia głosowe</h3>
+                    <p>Automatyczne połączenia głosowe przypominające o terminie ważności dokumentów, zamiast łatwych do przeoczenia powiadomień w aplikacji.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Zarządzanie dokumentami</h3>
+                    <p>System bazy danych monitorujący terminy ważności dokumentów i uprawnień pracowników.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <h3 class="feature-title">Terminowe przypomnienia</h3>
+                    <p>Powiadomienia w odpowiednim czasie, aby uniknąć kar za brak aktualnych dokumentów.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3 class="feature-title">Dla zespołów każdej wielkości</h3>
+                    <p>Skalowalne rozwiązanie dla małych firm i dużych przedsiębiorstw z wieloma pracownikami.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3 class="feature-title">Bramka VoIP</h3>
+                    <p>Wykorzystanie nowoczesnej technologii VoIP do wykonywania połączeń głosowych w sposób efektywny kosztowo.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Bezpieczeństwo danych</h3>
+                    <p>Pełne zabezpieczenie wrażliwych danych pracowników i dokumentów firmowych.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Jak to działa?</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Wprowadzenie dokumentów</h3>
+                        <p>Wprowadź do systemu informacje o dokumentach i uprawnieniach pracowników wraz z datami ich ważności.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Automatyczne monitorowanie</h3>
+                        <p>System automatycznie monitoruje zbliżające się terminy ważności dokumentów i identyfikuje te, które wymagają aktualizacji.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Powiadomienia głosowe</h3>
+                        <p>VoiceBot automatycznie dzwoni do pracowników, przypominając im o konieczności aktualizacji dokumentów w określonym terminie.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Śledzenie postępów</h3>
+                        <p>System śledzi status aktualizacji dokumentów i w razie potrzeby generuje powtórne przypomnienia.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>Raportowanie</h3>
+                        <p>Generowanie raportów dla zarządzających o statusie dokumentów i uprawnień w firmie.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta-section" id="kontakt">
+        <div class="container">
+            <h2>Gotowy na wdrożenie DocuAlert VoiceBot?</h2>
+            <p>Skontaktuj się z nami już dziś, aby dowiedzieć się, jak możemy pomóc Twojej firmie w zarządzaniu dokumentami i uniknięciu kar.</p>
+            <a href="mailto:kontakt@voicebot.fun" class="cta-button">Skontaktuj się z nami</a>
+        </div>
+    </section>
+    {% endblock %}
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-logo">DocuAlert VoiceBot</div>
+                    <p>Automatyczny system powiadamiania głosowego o terminach ważności dokumentów.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Szybkie linki</h3>
+                    <ul>
+                        <li><a href="#">Strona główna</a></li>
+                        <li><a href="#">O nas</a></li>
+                        <li><a href="#">Funkcje</a></li>
+                        <li><a href="#">Cennik</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Kontakt</h3>
+                    <ul>
+                        <li><a href="mailto:kontakt@voicebot.fun">kontakt@voicebot.fun</a></li>
+                        <li><a href="tel:+48123456789">+48 123 456 789</a></li>
+                        <li>ul. Przykładowa 123</li>
+                        <li>00-000 Warszawa</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 DocuAlert VoiceBot. Wszelkie prawa zastrzeżone.
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Login and registration popup functionality
+        const loginButton = document.getElementById('loginButton');
+        const registerButton = document.getElementById('registerButton');
+        const loginPopup = document.getElementById('loginPopup');
+        const registerPopup = document.getElementById('registerPopup');
+        const closeButtons = document.querySelectorAll('.close-popup');
+        const showRegisterLink = document.getElementById('showRegister');
+        const showLoginLink = document.getElementById('showLogin');
+        
+        // Show login popup
+        loginButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginPopup.style.display = 'flex';
+            registerPopup.style.display = 'none';
+        });
+        
+        // Show register popup
+        registerButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            registerPopup.style.display = 'flex';
+            loginPopup.style.display = 'none';
+        });
+        
+        // Switch from login to register
+        showRegisterLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginPopup.style.display = 'none';
+            registerPopup.style.display = 'flex';
+        });
+        
+        // Switch from register to login
+        showLoginLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            registerPopup.style.display = 'none';
+            loginPopup.style.display = 'flex';
+        });
+        
+        // Close popups when X is clicked
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                loginPopup.style.display = 'none';
+                registerPopup.style.display = 'none';
+            });
+        });
+        
+        // Close popups when clicking outside the form
+        window.addEventListener('click', function(e) {
+            if (e.target === loginPopup) {
+                loginPopup.style.display = 'none';
+            }
+            if (e.target === registerPopup) {
+                registerPopup.style.display = 'none';
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
