@@ -56,7 +56,7 @@
                             <p>{{ project.description|truncatechars:100 }}</p>
                             <div class="project-meta">
                                 <span class="project-teams">{{ project.teams.count }} grup</span>
-                                <a href="{% url 'project_detail' project.id %}" class="project-link">Szczegóły</a>
+                                <a href="{% url 'project_detail' project.uuid %}" class="project-link">Szczegóły</a>
                             </div>
                         </div>
                     {% endfor %}
