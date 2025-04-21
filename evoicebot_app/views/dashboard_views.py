@@ -149,7 +149,7 @@ def create_team(request):
         project_id = request.GET.get('project')
         if project_id:
             try:
-                project = Project.objects.get(id=project_id)
+                project = Project.objects.get(uuid=project_id)
                 form = TeamForm(initial={'project': project})
             except Project.DoesNotExist:
                 form = TeamForm()
@@ -195,7 +195,7 @@ def create_project(request):
                              f'Projekt "{project.name}" został pomyślnie utworzony. Jesteś administratorem głównego zespołu.')
 
             # Przekierowanie do szczegółów projektu - upewnij się, że ten URL działa poprawnie
-            return redirect('project_detail', id=project.id)
+            return redirect('project_detail', uuid=project.uuid)
         else:
             # Wyświetl komunikat o błędach formularza
             for field, errors in form.errors.items():
@@ -328,7 +328,7 @@ def edit_project(request, uuid):
 
     if not is_project_admin:
         messages.error(request, 'Nie masz uprawnień do edycji tego projektu.')
-        return redirect('project_detail', id=project.id)
+        return redirect('project_detail', uuid=project.uuid)
 
     # Formularz dla projektu
     ProjectForm = modelform_factory(Project, fields=['name', 'description'])
@@ -338,7 +338,7 @@ def edit_project(request, uuid):
         if form.is_valid():
             form.save()
             messages.success(request, f'Projekt "{project.name}" został zaktualizowany.')
-            return redirect('project_detail', id=project.id)
+            return redirect('project_detail', uuid=project.uuid)
     else:
         form = ProjectForm(instance=project)
 
@@ -380,7 +380,7 @@ def delete_project(request, uuid):
 
     if not is_project_admin:
         messages.error(request, 'Nie masz uprawnień do usunięcia tego projektu.')
-        return redirect('project_detail', id=project.id)
+        return redirect('project_detail', uuid=project.uuid)
 
     if request.method == 'POST':
         project_name = project.name
