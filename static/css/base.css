@@ -533,3 +533,39 @@ footer {
         gap: 0.8rem;
     }
 }
+
+.auth-page {
+    background-color: var(--medium-color);
+    min-height: calc(100vh - 300px);
+    padding: 4rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-container {
+    background-color: var(--darker-color);
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    max-width: 450px;
+    width: 100%;
+    padding: 2rem;
+    border: 1px solid rgba(83, 109, 254, 0.1);
+}
+
+.auth-title {
+    color: var(--text-color);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.auth-form {
+    width: 100%;
+}
+
+@media (max-width: 500px) {
+    .auth-container {
+        max-width: 90%;
+    }
+}

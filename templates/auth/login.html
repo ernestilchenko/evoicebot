@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Zaloguj się - DocuAlert VoiceBot{% endblock %}
+
+{% block content %}
+    <section class="auth-page">
+        <div class="container">
+            <div class="auth-container">
+                <h2 class="auth-title">Zaloguj się</h2>
+                <form class="auth-form" method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">Nazwa użytkownika lub email</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Hasło</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-options">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Zapamiętaj mnie</label>
+                        </div>
+                        <a href="#" class="forgot-password">Zapomniałeś hasła?</a>
+                    </div>
+                    <button type="submit" class="login-button">Zaloguj się</button>
+                    <div class="separator">
+                        <span>lub</span>
+                    </div>
+                    <button type="button" class="google-button">
+                        <span class="google-icon">G</span>
+                        <span>Zaloguj się przez Google</span>
+                    </button>
+                    <div class="register-link">
+                        <p>Nie masz konta? <a href="{% url 'register' %}">Zarejestruj się</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}

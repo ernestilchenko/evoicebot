@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Zarejestruj się - DocuAlert VoiceBot{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="container">
+        <div class="auth-container">
+            <h2 class="auth-title">Zarejestruj się</h2>
+            <form class="auth-form" method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="reg-username">Nazwa użytkownika</label>
+                    <input type="text" id="reg-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Hasło</label>
+                    <input type="password" id="reg-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm-password">Potwierdź hasło</label>
+                    <input type="password" id="reg-confirm-password" name="confirm_password" required>
+                </div>
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">Akceptuję <a href="#">regulamin</a> i <a href="#">politykę prywatności</a></label>
+                    </div>
+                </div>
+                <button type="submit" class="login-button">Zarejestruj się</button>
+                <div class="separator">
+                    <span>lub</span>
+                </div>
+                <button type="button" class="google-button">
+                    <span class="google-icon">G</span>
+                    <span>Zarejestruj się przez Google</span>
+                </button>
+                <div class="register-link">
+                    <p>Masz już konto? <a href="{% url 'login' %}">Zaloguj się</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
