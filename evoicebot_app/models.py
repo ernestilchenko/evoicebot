@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from django.contrib.auth.models import User
@@ -91,3 +92,34 @@ class TeamMembership(models.Model):
 
     def __str__(self):
         return f"{self.user_profile.user.username} - {self.team.name} ({self.get_role_display()})"
+
+
+class Document(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    title = models.CharField(max_length=255, verbose_name="Tytuł")
+    description = models.TextField(blank=True, null=True, verbose_name="Opis")
+    file = models.FileField(upload_to='documents/', verbose_name="Plik")
+    file_type = models.CharField(max_length=50, verbose_name="Format pliku")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Data aktualizacji")
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='documents',
+                                null=True, blank=True, verbose_name="Projekt")
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='documents',
+                             null=True, blank=True, verbose_name="Zespół")
+    users = models.ManyToManyField(UserProfile, related_name='documents', verbose_name="Użytkownicy")
+
+    class Meta:
+        verbose_name = "Dokument"
+        verbose_name_plural = "Dokumenty"
+
+    def __str__(self):
+        return self.title
+
+    def get_file_extension(self):
+        return os.path.splitext(self.file.name)[1][1:].lower()
+
+    def save(self, *args, **kwargs):
+        # Automatyczne ustawienie typu pliku na podstawie rozszerzenia
+        if not self.file_type and self.file:
+            self.file_type = self.get_file_extension()
+        super().save(*args, **kwargs)

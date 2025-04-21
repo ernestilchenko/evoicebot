@@ -1,0 +1,41 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Usuń dokument - {{ document.title }}{% endblock %}
+
+{% block dashboard_content %}
+    <div class="dashboard-header">
+        <div class="header-back">
+            <a href="{% url 'document_detail' document.uuid %}" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Wróć do szczegółów dokumentu
+            </a>
+        </div>
+    </div>
+
+    <div class="delete-confirmation">
+        <div class="delete-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+        </div>
+        <h2>Czy na pewno chcesz usunąć dokument?</h2>
+        <p>Zamierzasz usunąć dokument "<strong>{{ document.title }}</strong>".</p>
+        <p class="warning">Ta operacja jest nieodwracalna. Dokument zostanie trwale usunięty z systemu.</p>
+
+        <div class="delete-actions">
+            <a href="{% url 'document_detail' document.uuid %}" class="btn btn-outline">Anuluj</a>
+            <form method="post" class="inline-form server-submit">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Tak, usuń dokument</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -19,4 +19,9 @@ urlpatterns = [
     path('app/dashboard/projects/create/', create_project, name='create_project'),
     path('app/dashboard/projects/<uuid:uuid>/edit/', edit_project, name='edit_project'),
     path('app/dashboard/projects/<uuid:uuid>/delete/', delete_project, name='delete_project'),
+    path('app/dashboard/documents/', document_list, name='document_list'),
+    path('app/dashboard/documents/<uuid:uuid>/', document_detail, name='document_detail'),
+    path('app/dashboard/documents/create/', create_document, name='create_document'),
+    path('app/dashboard/documents/<uuid:uuid>/edit/', edit_document, name='edit_document'),
+    path('app/dashboard/documents/<uuid:uuid>/delete/', delete_document, name='delete_document'),
 ]

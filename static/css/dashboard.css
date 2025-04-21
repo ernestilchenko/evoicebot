@@ -1305,3 +1305,325 @@ select::placeholder {
     color: var(--primary);
     overflow: hidden;
 }
+
+/* ========== Document Styles ========== */
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.document-card {
+    background-color: rgba(31, 41, 55, 0.5);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.document-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-light);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.document-card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.document-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 12px;
+    color: var(--primary);
+}
+
+.document-card-header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--white);
+}
+
+.document-card-body {
+    padding: 1.5rem;
+    flex: 1;
+    min-height: 100px;
+}
+
+.document-card-body p {
+    color: var(--gray-light);
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.document-card-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.document-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--gray-light);
+    font-size: 0.875rem;
+}
+
+.document-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.document-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Document Detail Page */
+.document-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.document-overview {
+    background-color: rgba(31, 41, 55, 0.5);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.document-header {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: rgba(17, 24, 39, 0.3);
+}
+
+.document-title {
+    flex: 1;
+}
+
+.document-title h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.75rem;
+    color: var(--white);
+}
+
+.document-description {
+    padding: 2rem;
+}
+
+.document-description h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--white);
+    position: relative;
+}
+
+.document-description h2::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+}
+
+.document-description p {
+    color: var(--gray-light);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.document-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.detail-section {
+    background-color: rgba(31, 41, 55, 0.5);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--white);
+    position: relative;
+}
+
+.detail-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.detail-label {
+    color: var(--gray-light);
+    font-size: 0.875rem;
+}
+
+.detail-value {
+    color: var(--white);
+    font-size: 1rem;
+}
+
+.document-preview {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.document-preview img {
+    max-width: 100%;
+    max-height: 600px;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pdf-preview {
+    width: 100%;
+    height: 600px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: rgba(17, 24, 39, 0.3);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info h3 {
+    font-size: 1rem;
+    margin: 0 0 0.25rem;
+    color: var(--white);
+}
+
+.user-info span {
+    font-size: 0.875rem;
+    color: var(--gray-light);
+}
+
+.file-preview-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: rgba(17, 24, 39, 0.7);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.file-preview-info svg {
+    color: var(--primary-light);
+}
+
+.users-select-container {
+    position: relative;
+}
+
+.select2-container--classic .select2-selection--multiple {
+    background-color: rgba(17, 24, 39, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0.5rem !important;
+    min-height: 100px !important;
+    padding: 0.5rem !important;
+}
+
+.select2-container--classic .select2-selection--multiple .select2-selection__choice {
+    background-color: rgba(99, 102, 241, 0.2) !important;
+    border: 1px solid var(--primary) !important;
+    border-radius: 0.25rem !important;
+    padding: 0.25rem 0.5rem !important;
+    color: var(--white) !important;
+}
+
+.select2-container--classic .select2-selection--multiple .select2-selection__choice__remove {
+    color: var(--white) !important;
+    margin-right: 0.5rem !important;
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .document-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .users-grid {
+        grid-template-columns: 1fr;
+    }
+}

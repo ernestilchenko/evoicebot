@@ -1,0 +1,204 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}{{ document.title }} - Dokumenty{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div class="header-back">
+        <a href="{% url 'document_list' %}" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Wróć do listy dokumentów
+        </a>
+    </div>
+    <div class="header-actions">
+        <a href="{% url 'edit_document' document.uuid %}" class="btn btn-outline btn-with-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Edytuj dokument
+        </a>
+        <a href="{% url 'delete_document' document.uuid %}" class="btn btn-outline btn-with-icon btn-danger">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+            Usuń dokument
+        </a>
+        <a href="{{ document.file.url }}" class="btn btn-primary btn-with-icon" download>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Pobierz dokument
+        </a>
+    </div>
+</div>
+
+<div class="document-detail">
+    <div class="document-overview">
+        <div class="document-header">
+            <div class="document-icon">
+                {% if document.file_type == 'pdf' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                {% elif document.file_type == 'doc' or document.file_type == 'docx' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                {% elif document.file_type == 'xls' or document.file_type == 'xlsx' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <rect x="8" y="12" width="8" height="6"></rect>
+                    </svg>
+                {% elif document.file_type == 'jpg' or document.file_type == 'jpeg' or document.file_type == 'png' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                {% endif %}
+            </div>
+            <div class="document-title">
+                <h1>{{ document.title }}</h1>
+                <div class="document-meta">
+                    <span class="document-type">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        Format: {{ document.file_type|upper }}
+                    </span>
+                    <span class="document-date">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Utworzono: {{ document.created_at|date:"d.m.Y" }}
+                    </span>
+                    <span class="document-size">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        Rozmiar: {{ document.file.size|filesizeformat }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="document-description">
+            <h2>Opis</h2>
+            {% if document.description %}
+                <p>{{ document.description }}</p>
+            {% else %}
+                <p class="text-muted">Brak opisu dokumentu</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="document-details">
+        <div class="detail-section">
+            <h2>Szczegóły dokumentu</h2>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Projekt</span>
+                    <span class="detail-value">
+                        {% if document.project %}
+                            <a href="{% url 'project_detail' document.project.uuid %}">{{ document.project.name }}</a>
+                        {% else %}
+                            <span class="text-muted">Nie przypisano</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Grupa</span>
+                    <span class="detail-value">
+                        {% if document.team %}
+                            <a href="{% url 'team_detail' document.team.uuid %}">{{ document.team.name }}</a>
+                        {% else %}
+                            <span class="text-muted">Nie przypisano</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Format pliku</span>
+                    <span class="detail-value">{{ document.file_type|upper }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Data utworzenia</span>
+                    <span class="detail-value">{{ document.created_at|date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Ostatnia aktualizacja</span>
+                    <span class="detail-value">{{ document.updated_at|date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Rozmiar pliku</span>
+                    <span class="detail-value">{{ document.file.size|filesizeformat }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2>Użytkownicy z dostępem</h2>
+            <div class="users-list">
+                {% if document.users.all %}
+                    <div class="users-grid">
+                        {% for user_profile in document.users.all %}
+                            <div class="user-card">
+                                <div class="user-avatar">{{ user_profile.user.username|first|upper }}</div>
+                                <div class="user-info">
+                                    <h3>{{ user_profile.user.get_full_name|default:user_profile.user.username }}</h3>
+                                    <span class="user-email">{{ user_profile.user.email }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Brak przypisanych użytkowników</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if document.file_type == 'jpg' or document.file_type == 'jpeg' or document.file_type == 'png' %}
+        <div class="detail-section">
+            <h2>Podgląd</h2>
+            <div class="document-preview">
+                <img src="{{ document.file.url }}" alt="{{ document.title }}">
+            </div>
+        </div>
+        {% elif document.file_type == 'pdf' %}
+        <div class="detail-section">
+            <h2>Podgląd</h2>
+            <div class="document-preview pdf-preview">
+                <iframe src="{{ document.file.url }}" width="100%" height="600px"></iframe>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
