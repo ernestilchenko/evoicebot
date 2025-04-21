@@ -353,7 +353,7 @@ def edit_project(request, uuid):
 @login_required
 def delete_project(request, uuid):
     """Widok usuwania projektu"""
-    project = get_object_or_404(Project, uuid)
+    project = get_object_or_404(Project, uuid=uuid)
 
     # Sprawdzamy czy użytkownik ma dostęp do tego projektu
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
