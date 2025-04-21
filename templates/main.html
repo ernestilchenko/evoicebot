@@ -121,6 +121,7 @@
                 {% if user.is_authenticated %}
                     <a href="#" class="mobile-nav-link">Profil</a>
                     <a href="#" class="mobile-nav-link">Ustawienia</a>
+                    <a href="{% url 'dashboard' %}" class="mobile-nav-link">Dashboard</a>
                     <a href="{% url 'logout' %}" class="mobile-nav-link">Wyloguj się</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-outline">Zaloguj się</a>
