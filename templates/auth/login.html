@@ -1,43 +1,107 @@
-{% extends 'base.html' %}
 {% load static %}
-
-{% block title %}Zaloguj się - DocuAlert VoiceBot{% endblock %}
-
-{% block content %}
-    <section class="auth-page">
-        <div class="container">
-            <div class="auth-container">
-                <h2 class="auth-title">Zaloguj się</h2>
-                <form class="auth-form" method="post" action="{% url 'login' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="username">Nazwa użytkownika lub email</label>
-                        <input type="text" id="username" name="username" required>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaloguj się</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                {% if message.tags == 'success' %}
+                    <div class="message-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Hasło</label>
-                        <input type="password" id="password" name="password" required>
+                {% else %}
+                    <div class="message-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                             stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
                     </div>
-                    <div class="form-options">
-                        <div class="remember-me">
-                            <input type="checkbox" id="remember" name="remember">
-                            <label for="remember">Zapamiętaj mnie</label>
-                        </div>
-                        <a href="#" class="forgot-password">Zapomniałeś hasła?</a>
-                    </div>
-                    <button type="submit" class="login-button">Zaloguj się</button>
-                    <div class="separator">
-                        <span>lub</span>
-                    </div>
-                    <button type="button" class="google-button">
-                        <span class="google-icon">G</span>
-                        <span>Zaloguj się przez Google</span>
-                    </button>
-                    <div class="register-link">
-                        <p>Nie masz konta? <a href="{% url 'register' %}">Zarejestruj się</a></p>
-                    </div>
-                </form>
+                {% endif %}
+                <p>{{ message }}</p>
             </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="auth-container">
+    <div class="auth-box">
+        <div class="auth-header">
+            <h1 class="auth-title">Logowanie</h1>
+            <p class="auth-subtitle">Wprowadź swoje dane, aby kontynuować</p>
         </div>
-    </section>
-{% endblock %}
+
+        <form class="auth-form" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <input type="text" id="username" name="username" class="form-control" placeholder="Nazwa użytkownika"
+                       required autocomplete="username">
+                <label for="username" class="form-label">Nazwa użytkownika</label>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="password" name="password" class="form-control" placeholder="Hasło" required
+                       autocomplete="current-password">
+                <label for="password" class="form-label">Hasło</label>
+                <button type="button" class="password-toggle" tabindex="-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="form-options">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="remember" name="remember" class="checkbox-input">
+                    <label for="remember" class="checkbox-label">
+                        <span class="checkbox-custom"></span>
+                        Zapamiętaj mnie
+                    </label>
+                </div>
+                <a href="#" class="forgot-link">Zapomniałeś hasła?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Zaloguj się</button>
+
+            <div class="divider">
+                <span>lub</span>
+            </div>
+
+            <div class="social-login">
+                <button type="button" class="btn btn-social">
+                        <span class="social-icon">
+                            <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                                <path fill="currentColor"
+                                      d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
+                            </svg>
+                        </span>
+                    Zaloguj się przez Google
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                <p>Nie masz konta? <a href="{% url 'register' %}" class="auth-link">Zarejestruj się</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'js/auth.js' %}"></script>
+</body>
+</html>
