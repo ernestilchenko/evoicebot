@@ -19,7 +19,7 @@ def login(request):
             if not remember_me:
                 request.session.set_expiry(0)
 
-            return redirect('main')
+            return redirect('dashboard')
         else:
             messages.error(request, 'Nieprawidłowa nazwa użytkownika lub hasło.')
 

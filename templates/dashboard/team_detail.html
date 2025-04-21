@@ -1,0 +1,90 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div class="header-back">
+        <a href="{% url 'team_list' %}" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Wróć do listy grup
+        </a>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-outline">Edytuj</button>
+        <button class="btn btn-primary">Zarządzaj członkami</button>
+    </div>
+</div>
+
+<div class="team-detail">
+    <div class="team-header">
+        <div class="team-header-info">
+            {% if team.logo %}
+                <img src="{{ team.logo.url }}" alt="{{ team.name }}" class="team-logo">
+            {% else %}
+                <div class="team-logo-placeholder">{{ team.name|first|upper }}</div>
+            {% endif %}
+            <div class="team-title">
+                <h1>{{ team.name }}</h1>
+                <div class="team-meta">
+                    <span class="team-project">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        Projekt: {{ team.project.name }}
+                    </span>
+                    <span class="team-id">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        ID: {{ team.uuid }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="team-content">
+        <div class="team-section">
+            <h2>Opis</h2>
+            <div class="team-description">
+                {% if team.description %}
+                    <p>{{ team.description }}</p>
+                {% else %}
+                    <p class="text-muted">Brak opisu</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="team-section">
+            <h2>Członkowie ({{ members.count }})</h2>
+            <div class="team-members">
+                {% if members %}
+                    <div class="members-grid">
+                        {% for profile in members %}
+                            <div class="member-card">
+                                <div class="member-avatar">{{ profile.user.username|first|upper }}</div>
+                                <div class="member-info">
+                                    <h3>{{ profile.user.get_full_name|default:profile.user.username }}</h3>
+                                    <span class="member-role">{{ profile.get_role_display }}</span>
+                                    {% if profile.phone %}
+                                        <span class="member-phone">{{ profile.phone }}</span>
+                                    {% endif %}
+                                    <span class="member-email">{{ profile.user.email }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Brak członków w tej grupie</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

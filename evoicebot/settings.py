@@ -30,6 +30,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['voicebot.fun', 'www.voicebot.fun', 'localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://voicebot.fun',
+    'https://www.voicebot.fun',
+    'http://voicebot.fun',
+    'http://www.voicebot.fun',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
 # Application definition
 
 INSTALLED_APPS = [

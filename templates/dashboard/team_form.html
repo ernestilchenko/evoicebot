@@ -1,0 +1,113 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Edytuj grupę{% else %}Nowa grupa{% endif %} - Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div class="header-back">
+        <a href="{% if form.instance.pk %}{% url 'team_detail' form.instance.uuid %}{% else %}{% url 'team_list' %}{% endif %}" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            {% if form.instance.pk %}Wróć do szczegółów grupy{% else %}Wróć do listy grup{% endif %}
+        </a>
+    </div>
+</div>
+
+<div class="form-container">
+    <div class="form-header">
+        <h2>{% if form.instance.pk %}Edytuj grupę{% else %}Utwórz nową grupę{% endif %}</h2>
+        <p>{% if form.instance.pk %}Zmień dane grupy{% else %}Wypełnij formularz, aby utworzyć nową grupę{% endif %}</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="form-custom server-submit" action="{% if form.instance.pk %}{% url 'edit_team' form.instance.uuid %}{% else %}{% url 'create_team' %}{% endif %}">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="form-errors">
+            <div class="error-message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div>
+                    <h4>Wystąpiły błędy w formularzu</h4>
+                    <p>Sprawdź formularz i popraw błędy przed zapisaniem.</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="form-group {% if form.name.errors %}has-error{% endif %}">
+            <label for="{{ form.name.id_for_label }}" class="form-label">Nazwa grupy*</label>
+            <input type="text" name="name" id="{{ form.name.id_for_label }}" class="form-control" required value="{{ form.name.value|default:'' }}">
+            {% if form.name.errors %}
+                <div class="input-error">{{ form.name.errors.0 }}</div>
+            {% endif %}
+            <div class="form-hint">Wprowadź nazwę, która będzie jasno identyfikować grupę.</div>
+        </div>
+
+        <div class="form-group {% if form.project.errors %}has-error{% endif %}">
+            <label for="{{ form.project.id_for_label }}" class="form-label">Projekt*</label>
+            <select name="project" id="{{ form.project.id_for_label }}" class="form-control" required>
+                <option value="" {% if not form.project.value %}selected{% endif %} disabled>Wybierz projekt</option>
+                {% for project in form.fields.project.queryset %}
+                    <option value="{{ project.id }}" {% if form.project.value|stringformat:"i" == project.id|stringformat:"i" %}selected{% endif %}>{{ project.name }}</option>
+                {% endfor %}
+            </select>
+            {% if form.project.errors %}
+                <div class="input-error">{{ form.project.errors.0 }}</div>
+            {% endif %}
+            <div class="form-hint">Wybierz projekt, do którego będzie należeć grupa.</div>
+        </div>
+
+        <div class="form-group {% if form.description.errors %}has-error{% endif %}">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Opis</label>
+            <textarea name="description" id="{{ form.description.id_for_label }}" class="form-control" rows="4">{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+                <div class="input-error">{{ form.description.errors.0 }}</div>
+            {% endif %}
+            <div class="form-hint">Krótki opis celu i zakresu zadań grupy (opcjonalnie).</div>
+        </div>
+
+        <div class="form-group {% if form.logo.errors %}has-error{% endif %}">
+            <label for="{{ form.logo.id_for_label }}" class="form-label">Logo grupy</label>
+            <div class="file-upload-container">
+                <div class="file-preview" {% if not form.instance.logo %}style="display: none;"{% endif %}>
+                    {% if form.instance.logo %}
+                        <img src="{{ form.instance.logo.url }}" alt="Logo podgląd">
+                    {% endif %}
+                </div>
+                <div class="file-input-wrapper">
+                    <input type="file" name="logo" id="{{ form.logo.id_for_label }}" accept="image/*">
+                    <div class="file-overlay">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                        <span>Wybierz plik lub przeciągnij tutaj</span>
+                    </div>
+                </div>
+            </div>
+            {% if form.logo.errors %}
+                <div class="input-error">{{ form.logo.errors.0 }}</div>
+            {% endif %}
+            <div class="form-hint">Zalecany rozmiar: 200x200px, format: JPG, PNG (opcjonalnie).</div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-outline" onclick="history.back()">Anuluj</button>
+            <button type="submit" class="btn btn-primary">
+                {% if form.instance.pk %}Zapisz zmiany{% else %}Utwórz grupę{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

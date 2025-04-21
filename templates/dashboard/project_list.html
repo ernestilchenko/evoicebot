@@ -1,0 +1,127 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Projekty - Dashboard{% endblock %}
+
+{% block dashboard_content %}
+    <div class="dashboard-header">
+        <div>
+            <h1>Projekty</h1>
+            <p>Zarządzaj swoimi projektami i ich zespołami</p>
+        </div>
+        <a href="{% url 'create_project' %}" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Nowy projekt
+        </a>
+    </div>
+
+    <div class="projects-container">
+        {% if projects %}
+            <div class="projects-grid">
+                {% for project in projects %}
+                    <div class="project-card">
+                        <div class="project-card-header">
+                            <div class="project-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                    <polyline points="2 17 12 22 22 17"></polyline>
+                                    <polyline points="2 12 12 17 22 12"></polyline>
+                                </svg>
+                            </div>
+                            <h3>{{ project.name }}</h3>
+                        </div>
+                        <div class="project-card-body">
+                            <p>{{ project.description|truncatechars:150|default:"Brak opisu" }}</p>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-meta">
+                            <span class="project-teams" title="Liczba grup">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                {{ project.teams.count }} grup
+                            </span>
+                                <span class="project-date" title="Data utworzenia">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                {{ project.created_at|date:"d.m.Y" }}
+                            </span>
+                            </div>
+                            <div class="project-actions">
+                                <a href="{% url 'project_detail' project.id %}"
+                                   class="btn btn-sm btn-outline">Szczegóły</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                     class="empty-icon">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+                <h3>Nie masz jeszcze żadnych projektów</h3>
+                <p>Utwórz swój pierwszy projekt, aby rozpocząć pracę</p>
+                <a href="{% url 'create_project' %}" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Utwórz pierwszy projekt
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if projects.count >= 6 %}
+        <div class="pagination-container">
+            <a href="{% url 'create_project' %}" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Nowy projekt
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add animation to project cards
+            const projectCards = document.querySelectorAll('.project-card');
+            projectCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.3s ease';
+
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + (index * 50));
+            });
+        });
+    </script>
+{% endblock %}

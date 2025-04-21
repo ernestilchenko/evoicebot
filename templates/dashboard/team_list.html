@@ -1,0 +1,115 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Grupy - Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>Grupy</h1>
+        <p>Zarządzaj swoimi grupami i zespołami</p>
+    </div>
+    <a href="{% url 'create_team' %}" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nowa grupa
+    </a>
+</div>
+
+<div class="teams-container">
+    {% if teams %}
+        <div class="teams-grid">
+            {% for team in teams %}
+                <div class="team-card">
+                    <div class="team-card-header">
+                        {% if team.logo %}
+                            <img src="{{ team.logo.url }}" alt="{{ team.name }}" class="team-logo">
+                        {% else %}
+                            <div class="team-logo-placeholder">{{ team.name|first|upper }}</div>
+                        {% endif %}
+                        <h3>{{ team.name }}</h3>
+                    </div>
+                    <div class="team-card-body">
+                        <p>{{ team.description|truncatechars:150|default:"Brak opisu" }}</p>
+                    </div>
+                    <div class="team-card-footer">
+                        <div class="team-meta">
+                            <span class="team-members" title="Liczba członków">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                {{ team.members.count }}
+                            </span>
+                            {% if team.project %}
+                            <span class="team-project" title="Projekt">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                    <polyline points="2 17 12 22 22 17"></polyline>
+                                    <polyline points="2 12 12 17 22 12"></polyline>
+                                </svg>
+                                {{ team.project.name }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'team_detail' team.uuid %}" class="btn btn-sm btn-outline">Szczegóły</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="empty-icon">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <h3>Nie masz jeszcze żadnych grup</h3>
+            <p>Utwórz swoją pierwszą grupę, aby rozpocząć współpracę</p>
+            <a href="{% url 'create_team' %}" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Utwórz pierwszą grupę
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% if teams.count >= 6 %}
+<div class="pagination-container">
+    <a href="{% url 'create_team' %}" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nowa grupa
+    </a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation to team cards
+        const teamCards = document.querySelectorAll('.team-card');
+        teamCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.3s ease';
+
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 + (index * 50));
+        });
+    });
+</script>
+{% endblock %}

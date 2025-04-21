@@ -1,0 +1,111 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p>Witaj, {{ request.user.username }}!</p>
+</div>
+
+<div class="dashboard-cards">
+    <div class="dashboard-card">
+        <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+        </div>
+        <div class="card-content">
+            <h3>Projekty</h3>
+            <p class="card-value">{{ projects.count }}</p>
+        </div>
+        <a href="{% url 'project_list' %}" class="card-link">Zarządzaj</a>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+        </div>
+        <div class="card-content">
+            <h3>Grupy</h3>
+            <p class="card-value">{{ teams.count }}</p>
+        </div>
+        <a href="{% url 'team_list' %}" class="card-link">Zarządzaj</a>
+    </div>
+</div>
+
+<div class="dashboard-sections">
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Twoje projekty</h2>
+            <a href="{% url 'create_project' %}" class="btn btn-sm btn-primary">+ Nowy projekt</a>
+        </div>
+
+        <div class="section-content">
+            {% if projects %}
+                <div class="project-list">
+                    {% for project in projects %}
+                        <div class="project-item">
+                            <h3>{{ project.name }}</h3>
+                            <p>{{ project.description|truncatechars:100 }}</p>
+                            <div class="project-meta">
+                                <span class="project-teams">{{ project.teams.count }} grup</span>
+                                <a href="{% url 'project_detail' project.id %}" class="project-link">Szczegóły</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>Nie masz jeszcze żadnych projektów.</p>
+                    <a href="{% url 'create_project' %}" class="btn btn-primary">Utwórz pierwszy projekt</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Twoje grupy</h2>
+            <a href="{% url 'create_team' %}" class="btn btn-sm btn-primary">+ Nowa grupa</a>
+        </div>
+
+        <div class="section-content">
+            {% if teams %}
+                <div class="team-list">
+                    {% for team in teams %}
+                        <div class="team-item">
+                            <div class="team-logo">
+                                {% if team.logo %}
+                                    <img src="{{ team.logo.url }}" alt="{{ team.name }}">
+                                {% else %}
+                                    <div class="team-logo-placeholder">{{ team.name|first|upper }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="team-info">
+                                <h3>{{ team.name }}</h3>
+                                <p>{{ team.description|truncatechars:100 }}</p>
+                                <div class="team-meta">
+                                    <span class="team-members">{{ team.members.count }} członków</span>
+                                    <a href="{% url 'team_detail' team.uuid %}" class="team-link">Szczegóły</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>Nie należysz jeszcze do żadnej grupy.</p>
+                    <a href="{% url 'create_team' %}" class="btn btn-primary">Utwórz pierwszą grupę</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
