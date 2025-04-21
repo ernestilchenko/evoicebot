@@ -1286,3 +1286,22 @@ select::placeholder {
 .inline-form {
     display: inline;
 }
+
+.project-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.project-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 12px;
+    color: var(--primary);
+    overflow: hidden;
+}
