@@ -16,7 +16,7 @@
             </a>
         </div>
         <div class="header-actions">
-            <a href="{% url 'edit_project' project.id %}" class="btn btn-outline btn-with-icon">
+            <a href="{% url 'edit_project' project.uuid %}" class="btn btn-outline btn-with-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -24,7 +24,7 @@
                 </svg>
                 Edytuj projekt
             </a>
-            <a href="{% url 'delete_project' project.id %}" class="btn btn-outline btn-with-icon btn-danger">
+            <a href="{% url 'delete_project' project.uuid %}" class="btn btn-outline btn-with-icon btn-danger">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="3 6 5 6 21 6"></polyline>
@@ -34,7 +34,7 @@
                 </svg>
                 Usuń projekt
             </a>
-            <a href="{% url 'create_team' %}?project={{ project.id }}" class="btn btn-primary btn-with-icon">
+            <a href="{% url 'create_team' %}?project={{ project.uuid }}" class="btn btn-primary btn-with-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -53,12 +53,16 @@
         <div class="project-overview">
             <div class="project-header">
                 <div class="project-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                        <polyline points="2 17 12 22 22 17"></polyline>
-                        <polyline points="2 12 12 17 22 12"></polyline>
-                    </svg>
+                    {% if project.logo %}
+                        <img src="{{ project.logo.url }}" alt="{{ project.name }}" class="project-logo">
+                    {% else %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                    {% endif %}
                 </div>
                 <div class="project-title">
                     <h1>{{ project.name }}</h1>
@@ -124,7 +128,7 @@
         <div class="project-teams-section">
             <div class="section-header">
                 <h2>Grupy w projekcie</h2>
-                <a href="{% url 'create_team' %}?project={{ project.id }}" class="btn btn-sm btn-primary">
+                <a href="{% url 'create_team' %}?project={{ project.uuid }}" class="btn btn-sm btn-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -189,7 +193,7 @@
                     </svg>
                     <h3>Brak grup w tym projekcie</h3>
                     <p>Dodaj pierwszą grupę do projektu</p>
-                    <a href="{% url 'create_team' %}?project={{ project.id }}" class="btn btn-primary">
+                    <a href="{% url 'create_team' %}?project={{ project.uuid }}" class="btn btn-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>

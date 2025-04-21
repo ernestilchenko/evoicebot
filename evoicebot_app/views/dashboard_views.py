@@ -80,9 +80,9 @@ def project_list(request):
 
 
 @login_required
-def project_detail(request, id):
+def project_detail(request, uuid):
     """Widok szczegółów projektu"""
-    project = get_object_or_404(Project, id=id)
+    project = get_object_or_404(Project, uuid=uuid)
     teams = project.teams.all()
 
     # Sprawdzamy czy użytkownik ma dostęp do tego projektu
@@ -299,9 +299,9 @@ def manage_team_members(request, uuid):
 
 
 @login_required
-def edit_project(request, id):
+def edit_project(request, uuid):
     """Widok edycji projektu"""
-    project = get_object_or_404(Project, id=id)
+    project = get_object_or_404(Project, uuid=uuid)
 
     # Sprawdzamy czy użytkownik ma dostęp do tego projektu
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
@@ -351,9 +351,9 @@ def edit_project(request, id):
 
 
 @login_required
-def delete_project(request, id):
+def delete_project(request, uuid):
     """Widok usuwania projektu"""
-    project = get_object_or_404(Project, id=id)
+    project = get_object_or_404(Project, uuid)
 
     # Sprawdzamy czy użytkownik ma dostęp do tego projektu
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "evoicebot_app",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -130,9 +131,37 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+GS_BUCKET_NAME = 'voicebot_storage'
+GS_CREDENTIALS_FILE = os.path.join(BASE_DIR, 'voicebot-455812-24243b5732cd.json')
+
+if os.path.isfile(GS_CREDENTIALS_FILE):
+    from google.oauth2 import service_account
+
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(GS_CREDENTIALS_FILE)
+else:
+    # Si no existe, asumimos que estamos en Google Cloud y usará las credenciales del entorno
+    GS_CREDENTIALS = None
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "OPTIONS": {
+            "bucket_name": GS_BUCKET_NAME,
+            "credentials": GS_CREDENTIALS,
+            "location": "media",
+            "default_acl": "publicRead",
+            "querystring_auth": False,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

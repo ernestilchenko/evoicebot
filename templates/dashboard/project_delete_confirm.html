@@ -6,7 +6,7 @@
 {% block dashboard_content %}
     <div class="dashboard-header">
         <div class="header-back">
-            <a href="{% url 'project_detail' project.id %}" class="back-link">
+            <a href="{% url 'project_detail' project.uuid %}" class="back-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -32,7 +32,7 @@
             projektem.</p>
 
         <div class="delete-actions">
-            <a href="{% url 'project_detail' project.id %}" class="btn btn-outline">Anuluj</a>
+            <a href="{% url 'project_detail' project.uuid %}" class="btn btn-outline">Anuluj</a>
             <form method="post" class="inline-form server-submit">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Tak, usuń projekt</button>

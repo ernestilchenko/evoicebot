@@ -55,7 +55,7 @@
             <select name="project" id="{{ form.project.id_for_label }}" class="form-control" required>
                 <option value="" {% if not form.project.value %}selected{% endif %} disabled>Wybierz projekt</option>
                 {% for project in form.fields.project.queryset %}
-                    <option value="{{ project.id }}" {% if form.project.value|stringformat:"i" == project.id|stringformat:"i" %}selected{% endif %}>{{ project.name }}</option>
+                    <option value="{{ project.uuid }}" {% if form.project.value|stringformat:"i" == project.uuid|stringformat:"i" %}selected{% endif %}>{{ project.name }}</option>
                 {% endfor %}
             </select>
             {% if form.project.errors %}

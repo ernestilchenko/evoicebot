@@ -1,11 +1,15 @@
-from django.db import models
-from django.contrib.auth.models import User
 import uuid
+
+from django.contrib.auth.models import User
+from django.db import models
+from storages.backends.gcloud import GoogleCloudStorage
 
 
 class Project(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255, verbose_name="Nazwa")
     description = models.TextField(blank=True, null=True, verbose_name="Opis")
+    logo = models.ImageField(upload_to='project_logos/', blank=True, null=True, verbose_name="Logo")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Data aktualizacji")
 
@@ -21,7 +25,8 @@ class Team(models.Model):
     name = models.CharField(max_length=255, verbose_name="Nazwa")
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     description = models.TextField(blank=True, null=True, verbose_name="Opis")
-    logo = models.ImageField(upload_to='team_logos/', blank=True, null=True, verbose_name="Logo")
+    logo = models.ImageField(upload_to='team_logos/', blank=True, null=True, verbose_name="Logo",
+                             storage=GoogleCloudStorage())
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='teams', verbose_name="Projekt")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Data aktualizacji")
