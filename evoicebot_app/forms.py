@@ -6,7 +6,7 @@ from .models import Document
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = ['title', 'description', 'file', 'users']
+        fields = ['title', 'description', 'file', 'project', 'team', 'users']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
             'users': forms.SelectMultiple(attrs={'class': 'form-control'})
