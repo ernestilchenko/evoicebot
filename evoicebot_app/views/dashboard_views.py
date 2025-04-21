@@ -296,3 +296,137 @@ def manage_team_members(request, uuid):
     }
 
     return render(request, 'dashboard/manage_team_members.html', context)
+
+
+@login_required
+def edit_project(request, id):
+    """Widok edycji projektu"""
+    project = get_object_or_404(Project, id=id)
+
+    # Sprawdzamy czy użytkownik ma dostęp do tego projektu
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    teams = project.teams.all()
+    user_teams = user_profile.get_teams()
+    has_access = any(team in user_teams for team in teams) or user_profile.role == 'admin'
+
+    if not has_access:
+        messages.error(request, 'Nie masz dostępu do tego projektu.')
+        return redirect('dashboard')
+
+    # Sprawdzamy czy użytkownik jest adminem projektu
+    is_project_admin = False
+    for team in teams:
+        try:
+            membership = TeamMembership.objects.get(user_profile=user_profile, team=team)
+            if membership.role == 'admin':
+                is_project_admin = True
+                break
+        except TeamMembership.DoesNotExist:
+            pass
+
+    is_project_admin = is_project_admin or user_profile.role == 'admin'
+
+    if not is_project_admin:
+        messages.error(request, 'Nie masz uprawnień do edycji tego projektu.')
+        return redirect('project_detail', id=project.id)
+
+    # Formularz dla projektu
+    ProjectForm = modelform_factory(Project, fields=['name', 'description'])
+
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Projekt "{project.name}" został zaktualizowany.')
+            return redirect('project_detail', id=project.id)
+    else:
+        form = ProjectForm(instance=project)
+
+    context = {
+        'form': form,
+        'project': project
+    }
+
+    return render(request, 'dashboard/project_form.html', context)
+
+
+@login_required
+def delete_project(request, id):
+    """Widok usuwania projektu"""
+    project = get_object_or_404(Project, id=id)
+
+    # Sprawdzamy czy użytkownik ma dostęp do tego projektu
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    teams = project.teams.all()
+    user_teams = user_profile.get_teams()
+    has_access = any(team in user_teams for team in teams) or user_profile.role == 'admin'
+
+    if not has_access:
+        messages.error(request, 'Nie masz dostępu do tego projektu.')
+        return redirect('dashboard')
+
+    # Sprawdzamy czy użytkownik jest adminem projektu
+    is_project_admin = False
+    for team in teams:
+        try:
+            membership = TeamMembership.objects.get(user_profile=user_profile, team=team)
+            if membership.role == 'admin':
+                is_project_admin = True
+                break
+        except TeamMembership.DoesNotExist:
+            pass
+
+    is_project_admin = is_project_admin or user_profile.role == 'admin'
+
+    if not is_project_admin:
+        messages.error(request, 'Nie masz uprawnień do usunięcia tego projektu.')
+        return redirect('project_detail', id=project.id)
+
+    if request.method == 'POST':
+        project_name = project.name
+        project.delete()
+        messages.success(request, f'Projekt "{project_name}" został usunięty.')
+        return redirect('dashboard')
+
+    context = {
+        'project': project
+    }
+
+    return render(request, 'dashboard/project_delete_confirm.html', context)
+
+
+@login_required
+def edit_team(request, uuid):
+    """Widok edycji zespołu"""
+    team = get_object_or_404(Team, uuid=uuid)
+
+    # Sprawdzamy czy użytkownik jest administratorem tego zespołu
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    try:
+        membership = TeamMembership.objects.get(user_profile=user_profile, team=team)
+        is_admin = membership.role == 'admin' or user_profile.role == 'admin'
+    except TeamMembership.DoesNotExist:
+        is_admin = user_profile.role == 'admin'
+
+    if not is_admin:
+        messages.error(request, 'Nie masz uprawnień do edycji tego zespołu.')
+        return redirect('team_detail', uuid=team.uuid)
+
+    # Formularz dla zespołu
+    TeamForm = modelform_factory(Team, fields=['name', 'description', 'logo', 'project'])
+
+    if request.method == 'POST':
+        form = TeamForm(request.POST, request.FILES, instance=team)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Zespół "{team.name}" został zaktualizowany.')
+            return redirect('team_detail', uuid=team.uuid)
+    else:
+        form = TeamForm(instance=team)
+
+    context = {
+        'form': form,
+        'team': team
+    }
+
+    return render(request, 'dashboard/team_form.html', context)

@@ -1232,3 +1232,57 @@ select::placeholder {
         height: 120px;
     }
 }
+
+.btn-danger {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.btn-danger:hover {
+    background-color: #ef4444;
+    color: white;
+}
+
+/* Strona potwierdzenia usuwania */
+.delete-confirmation {
+    background-color: rgba(31, 41, 55, 0.5);
+    border-radius: 0.75rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.delete-icon {
+    color: #ef4444;
+    margin-bottom: 1.5rem;
+}
+
+.delete-confirmation h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--white);
+}
+
+.delete-confirmation p {
+    color: var(--gray-light);
+    margin-bottom: 1rem;
+}
+
+.delete-confirmation .warning {
+    color: #ef4444;
+    font-weight: 500;
+    margin-bottom: 2rem;
+}
+
+.delete-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.inline-form {
+    display: inline;
+}
