@@ -7,7 +7,7 @@
     <div class="dashboard-header">
         <div class="header-back">
             <a href="
-                    {% if form.instance.pk %}{% url 'project_detail' form.instance.id %}{% else %}{% url 'project_list' %}{% endif %}"
+                    {% if form.instance.pk %}{% url 'project_detail' form.instance.uuid %}{% else %}{% url 'project_list' %}{% endif %}"
                class="back-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -27,7 +27,7 @@
         </div>
 
         <form method="post" class="form-custom server-submit" action="
-                {% if form.instance.pk %}{% url 'edit_project' form.instance.id %}{% else %}{% url 'create_project' %}{% endif %}"
+                {% if form.instance.pk %}{% url 'edit_project' form.instance.uuid %}{% else %}{% url 'create_project' %}{% endif %}"
               enctype="multipart/form-data">
             {% csrf_token %}
 
