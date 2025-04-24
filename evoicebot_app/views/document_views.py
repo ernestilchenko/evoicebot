@@ -1,10 +1,9 @@
-import base64
-import os
-
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+import base64
+import os
+from django.conf import settings
 from openai import OpenAI
 
 from ..forms import DocumentForm
@@ -48,8 +47,26 @@ def document_detail(request, uuid):
         messages.error(request, 'Nie masz dostępu do tego dokumentu.')
         return redirect('document_list')
 
+    # Check if file exists in storage
+    file_exists = True
+    file_size = None
+    file_url = None
+    try:
+        # Try to get file size - this will raise an exception if file doesn't exist
+        file_size = document.file.size
+        file_url = document.file.url
+    except Exception as e:
+        file_exists = False
+        messages.error(
+            request,
+            f'Plik dokumentu nie jest dostępny w magazynie: {str(e)}'
+        )
+
     context = {
         'document': document,
+        'file_exists': file_exists,
+        'file_size': file_size,
+        'file_url': file_url
     }
 
     return render(request, 'dashboard/document_detail.html', context)

@@ -34,15 +34,28 @@
                 </svg>
                 Usuń dokument
             </a>
-            <a href="{{ document.file.url }}" class="btn btn-primary btn-with-icon" download>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Pobierz dokument
-            </a>
+            {% if file_exists %}
+                <a href="{{ file_url }}" class="btn btn-primary btn-with-icon" download>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Pobierz dokument
+                </a>
+            {% else %}
+                <button class="btn btn-outline btn-with-icon" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <line x1="10" y1="10" x2="14" y2="14"></line>
+                        <line x1="14" y1="10" x2="10" y2="14"></line>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Plik niedostępny
+                </button>
+            {% endif %}
         </div>
     </div>
 
@@ -111,13 +124,24 @@
                         </svg>
                         Utworzono: {{ document.created_at|date:"d.m.Y" }}
                     </span>
-                        <span class="document-size">
+                        {% if file_exists %}
+                            <span class="document-size">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                         </svg>
-                        Rozmiar: {{ document.file.size|filesizeformat }}
+                        Rozmiar: {{ file_size|filesizeformat }}
                     </span>
+                        {% else %}
+                            <span class="document-size document-missing">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        Plik niedostępny
+                    </span>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -178,7 +202,13 @@
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Rozmiar pliku</span>
-                        <span class="detail-value">{{ document.file.size|filesizeformat }}</span>
+                        <span class="detail-value">
+                        {% if file_exists %}
+                            {{ file_size|filesizeformat }}
+                        {% else %}
+                            <span style="color: #ef4444;">Plik niedostępny</span>
+                        {% endif %}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -204,21 +234,56 @@
                 </div>
             </div>
 
-            {% if document.file_type == 'jpg' or document.file_type == 'jpeg' or document.file_type == 'png' %}
-                <div class="detail-section">
-                    <h2>Podgląd</h2>
-                    <div class="document-preview">
-                        <img src="{{ document.file.url }}" alt="{{ document.title }}">
+            {% if file_exists %}
+                {% if document.file_type == 'jpg' or document.file_type == 'jpeg' or document.file_type == 'png' %}
+                    <div class="detail-section">
+                        <h2>Podgląd</h2>
+                        <div class="document-preview">
+                            <img src="{{ file_url }}" alt="{{ document.title }}">
+                        </div>
                     </div>
-                </div>
-            {% elif document.file_type == 'pdf' %}
+                {% elif document.file_type == 'pdf' %}
+                    <div class="detail-section">
+                        <h2>Podgląd</h2>
+                        <div class="document-preview pdf-preview">
+                            <iframe src="{{ file_url }}" width="100%" height="600px"></iframe>
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
                 <div class="detail-section">
                     <h2>Podgląd</h2>
-                    <div class="document-preview pdf-preview">
-                        <iframe src="{{ document.file.url }}" width="100%" height="600px"></iframe>
+                    <div class="file-missing-alert"
+                         style="background-color: rgba(239, 68, 68, 0.1); padding: 2rem; border-radius: 0.5rem; text-align: center; border: 1px solid rgba(239, 68, 68, 0.3);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+                             stroke="#ef4444" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <h3 style="margin-top: 1rem; color: #ef4444;">Plik nie jest dostępny</h3>
+                        <p>Plik dokumentu nie jest dostępny w magazynie. Poproś administratora o przesłanie pliku
+                            ponownie.</p>
                     </div>
                 </div>
             {% endif %}
         </div>
     </div>
+
+    <style>
+        .document-missing {
+            color: #ef4444;
+        }
+
+        .file-missing-alert h3 {
+            color: #ef4444;
+            margin-top: 1rem;
+        }
+
+        .file-missing-alert p {
+            color: var(--gray-light);
+            max-width: 400px;
+            margin: 0.5rem auto;
+        }
+    </style>
 {% endblock %}
