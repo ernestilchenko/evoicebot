@@ -7,6 +7,7 @@
     <div class="dashboard-header">
         <div class="header-back">
             <a href="
+
                     {% if form.instance.pk %}{% url 'document_detail' form.instance.uuid %}{% else %}{% url 'document_list' %}{% endif %}"
                class="back-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -27,6 +28,7 @@
         </div>
 
         <form method="post" enctype="multipart/form-data" class="form-custom server-submit" action="
+
                 {% if form.instance.pk %}{% url 'edit_document' form.instance.uuid %}{% else %}{% url 'create_document' %}{% endif %}">
             {% csrf_token %}
 
@@ -66,6 +68,19 @@
                 {% endif %}
                 <div class="form-hint">Krótki opis zawartości dokumentu (opcjonalnie).</div>
             </div>
+
+            {% if form.instance.ai_description %}
+                <div class="form-group">
+                    <label class="form-label">Opis wygenerowany przez AI</label>
+                    <div class="ai-description-box"
+                         style="background-color: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(99, 102, 241, 0.3);">
+                        {{ form.instance.ai_description }}
+                    </div>
+                    <div class="form-hint">Ten opis został automatycznie wygenerowany na podstawie zawartości
+                        dokumentu.
+                    </div>
+                </div>
+            {% endif %}
 
             <div class="form-group {% if form.file.errors %}has-error{% endif %}">
                 <label for="{{ form.file.id_for_label }}" class="form-label">Plik dokumentu{% if not form.instance.pk %}
@@ -164,6 +179,7 @@
                 </button>
             </div>
         </form>
+
     </div>
 {% endblock %}
 

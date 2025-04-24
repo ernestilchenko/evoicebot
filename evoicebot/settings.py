@@ -154,7 +154,6 @@ STORAGES = {
             "bucket_name": GS_BUCKET_NAME,
             "credentials": GS_CREDENTIALS,
             "location": "media",
-            "default_acl": "publicRead",
             "querystring_auth": False,
         },
     },
@@ -162,6 +161,6 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
-
 MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
