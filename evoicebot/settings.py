@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['voicebot.fun', 'www.voicebot.fun', 'localhost', '127.0.0.1', 'evoicebot-production.up.railway.app']
+ALLOWED_HOSTS = ['voicebot.fun', 'www.voicebot.fun', 'localhost', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://voicebot.fun',
@@ -37,8 +37,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://www.voicebot.fun',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://evoicebot-production.up.railway.app',
-    'http://evoicebot-production.up.railway.app',
 ]
 # Application definition
 
@@ -129,7 +127,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
