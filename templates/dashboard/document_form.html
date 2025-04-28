@@ -6,9 +6,7 @@
 {% block dashboard_content %}
     <div class="dashboard-header">
         <div class="header-back">
-            <a href="
-
-                    {% if form.instance.pk %}{% url 'document_detail' form.instance.uuid %}{% else %}{% url 'document_list' %}{% endif %}"
+            <a href="{% if form.instance.pk %}{% url 'document_detail' form.instance.uuid %}{% else %}{% url 'document_list' %}{% endif %}"
                class="back-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -27,9 +25,7 @@
                 dokument{% endif %}</p>
         </div>
 
-        <form method="post" enctype="multipart/form-data" class="form-custom server-submit" action="
-
-                {% if form.instance.pk %}{% url 'edit_document' form.instance.uuid %}{% else %}{% url 'create_document' %}{% endif %}">
+        <form method="post" enctype="multipart/form-data" class="form-custom server-submit" action="{% if form.instance.pk %}{% url 'edit_document' form.instance.uuid %}{% else %}{% url 'create_document' %}{% endif %}">
             {% csrf_token %}
 
             {% if form.errors %}
@@ -124,6 +120,29 @@
                 <div class="form-hint">Akceptowane formaty: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, itd.</div>
             </div>
 
+            <!-- AI Audio Option -->
+            <div class="form-group">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="generate_audio" name="generate_audio" class="checkbox-input"
+                           {% if form.instance.ai_audio %}checked disabled{% endif %}>
+                    <label for="generate_audio" class="checkbox-label">
+                        <span class="checkbox-custom"></span>
+                        Wygeneruj nagranie audio (Text-to-Speech)
+                    </label>
+                </div>
+                <div class="form-hint">Automatycznie wygeneruje nagranie głosowe na podstawie opisu dokumentu.</div>
+
+                {% if form.instance.ai_audio %}
+                    <div class="audio-preview" style="margin-top: 1rem;">
+                        <p>Aktualne nagranie:</p>
+                        <audio controls>
+                            <source src="{{ form.instance.ai_audio.url }}" type="audio/wav">
+                            Twoja przeglądarka nie obsługuje odtwarzania plików audio.
+                        </audio>
+                    </div>
+                {% endif %}
+            </div>
+
             <div class="form-group {% if form.project.errors %}has-error{% endif %}">
                 <label for="{{ form.project.id_for_label }}" class="form-label">Projekt</label>
                 <select name="project" id="{{ form.project.id_for_label }}" class="form-control">
@@ -193,6 +212,18 @@
                     placeholder: "Wybierz użytkowników",
                     allowClear: true,
                     theme: "classic"
+                });
+            }
+
+            // File upload causes audio checkbox to be enabled
+            const fileInput = document.querySelector('input[type="file"]');
+            const audioCheckbox = document.getElementById('generate_audio');
+
+            if (fileInput && audioCheckbox && audioCheckbox.disabled) {
+                fileInput.addEventListener('change', function() {
+                    if (this.files.length > 0) {
+                        audioCheckbox.disabled = false;
+                    }
                 });
             }
         });

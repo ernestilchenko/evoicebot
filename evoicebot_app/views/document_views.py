@@ -1,11 +1,11 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.files.base import ContentFile
 from django.shortcuts import render, redirect, get_object_or_404
-import base64
-import os
-from django.conf import settings
-from openai import OpenAI
 
+from ..api.openai import *
 from ..forms import DocumentForm
 from ..models import Document, UserProfile, Project, Team
 
@@ -47,26 +47,23 @@ def document_detail(request, uuid):
         messages.error(request, 'Nie masz dostępu do tego dokumentu.')
         return redirect('document_list')
 
-    # Check if file exists in storage
-    file_exists = True
-    file_size = None
-    file_url = None
-    try:
-        # Try to get file size - this will raise an exception if file doesn't exist
-        file_size = document.file.size
-        file_url = document.file.url
-    except Exception as e:
-        file_exists = False
-        messages.error(
-            request,
-            f'Plik dokumentu nie jest dostępny w magazynie: {str(e)}'
-        )
+    # Handle audio generation if requested
+    if request.GET.get('generate_audio') and document.ai_description and not document.ai_audio:
+        try:
+            # Generate audio from AI description
+            result = generate_speech(document.ai_description)
+
+            # Save audio file
+            filename = f"audio_{document.uuid}.wav"
+            document.ai_audio.save(filename, ContentFile(result["audio_data"]), save=True)
+
+            messages.success(request, 'Wygenerowano audio dla dokumentu.')
+            return redirect('document_detail', uuid=document.uuid)
+        except Exception as e:
+            messages.error(request, f'Błąd generowania audio: {str(e)}')
 
     context = {
         'document': document,
-        'file_exists': file_exists,
-        'file_size': file_size,
-        'file_url': file_url
     }
 
     return render(request, 'dashboard/document_detail.html', context)
@@ -89,58 +86,33 @@ def create_document(request):
                 # Save the file type for document
                 document.file_type = os.path.splitext(file.name)[1][1:].lower()
 
-                # Read file data for OpenAI processing
-                file_data = file.read()
-                file.seek(0)  # Reset file pointer after reading
+                # Process with OpenAI
+                ai_description = analyze_document(file, document.file_type)
+                if ai_description:
+                    document.ai_description = ai_description
 
-                # Only process if file isn't too large (10MB limit) and has valid file type
-                if len(file_data) < 10 * 1024 * 1024 and document.file_type in ['pdf', 'txt', 'doc', 'docx']:
+                    # Generate audio if AI description is available
                     try:
-                        # Convert to base64
-                        base64_string = base64.b64encode(file_data).decode("utf-8")
+                        if request.POST.get('generate_audio'):
+                            result = generate_speech(ai_description)
 
-                        # Determine MIME type based on extension
-                        mime_type = "application/pdf"  # Default
-                        if document.file_type == 'txt':
-                            mime_type = "text/plain"
-                        elif document.file_type in ['doc', 'docx']:
-                            mime_type = "application/msword"
-
-                        # Initialize OpenAI client
-                        client = OpenAI(api_key=settings.OPENAI_API_KEY)
-
-                        # Send to OpenAI
-                        response = client.responses.create(
-                            model="gpt-4.1",
-                            input=[
-                                {
-                                    "role": "user",
-                                    "content": [
-                                        {
-                                            "type": "input_file",
-                                            "filename": file.name,
-                                            "file_data": f"data:{mime_type};base64,{base64_string}",
-                                        },
-                                        {
-                                            "type": "input_text",
-                                            "text": "Przeanalizuj treść tego dokumentu i napisz krótkie streszczenie jego zawartości w języku polskim (maksymalnie 100 słów).",
-                                        },
-                                    ],
-                                },
-                            ]
-                        )
-
-                        # Get the description and save it
-                        document.ai_description = response.output_text
-
+                            # Save for later after document is created
+                            audio_data = result["audio_data"]
+                        else:
+                            audio_data = None
                     except Exception as e:
-                        # Log the error but continue saving the document
-                        print(f"Error processing document with AI: {e}")
+                        audio_data = None
+                        print(f"Error generating audio: {e}")
 
             # Save the document
             document.save()
             document.users.add(user_profile)  # Add current user
             form.save_m2m()  # Save many-to-many relationships
+
+            # Now save audio file if we have it
+            if ai_description and audio_data:
+                filename = f"audio_{document.uuid}.wav"
+                document.ai_audio.save(filename, ContentFile(audio_data), save=True)
 
             messages.success(request, f'Dokument "{document.title}" został pomyślnie utworzony.')
             return redirect('document_detail', uuid=document.uuid)
@@ -201,57 +173,35 @@ def edit_document(request, uuid):
                 # Save the file type for document
                 document.file_type = os.path.splitext(file.name)[1][1:].lower()
 
-                # Read file data for OpenAI processing
-                file_data = file.read()
-                file.seek(0)  # Reset file pointer after reading
+                # Process with OpenAI
+                ai_description = analyze_document(file, document.file_type)
+                if ai_description:
+                    document.ai_description = ai_description
 
-                # Only process if file isn't too large (10MB limit) and has valid file type
-                if len(file_data) < 10 * 1024 * 1024 and document.file_type in ['pdf', 'txt', 'doc', 'docx']:
+                    # If description changed, reset audio
+                    if document.ai_audio:
+                        document.ai_audio.delete(save=False)
+                        document.ai_audio = None
+
+                    # Generate new audio if requested
                     try:
-                        # Convert to base64
-                        base64_string = base64.b64encode(file_data).decode("utf-8")
-
-                        # Determine MIME type based on extension
-                        mime_type = "application/pdf"  # Default
-                        if document.file_type == 'txt':
-                            mime_type = "text/plain"
-                        elif document.file_type in ['doc', 'docx']:
-                            mime_type = "application/msword"
-
-                        # Initialize OpenAI client
-                        client = OpenAI(api_key=settings.OPENAI_API_KEY)
-
-                        # Send to OpenAI
-                        response = client.responses.create(
-                            model="gpt-4.1",
-                            input=[
-                                {
-                                    "role": "user",
-                                    "content": [
-                                        {
-                                            "type": "input_file",
-                                            "filename": file.name,
-                                            "file_data": f"data:{mime_type};base64,{base64_string}",
-                                        },
-                                        {
-                                            "type": "input_text",
-                                            "text": "Przeanalizuj treść tego dokumentu i napisz krótkie streszczenie jego zawartości w języku polskim (maksymalnie 100 słów).",
-                                        },
-                                    ],
-                                },
-                            ]
-                        )
-
-                        # Get the description and save it
-                        document.ai_description = response.output_text
-
+                        if request.POST.get('generate_audio'):
+                            result = generate_speech(ai_description)
+                            audio_data = result["audio_data"]
+                        else:
+                            audio_data = None
                     except Exception as e:
-                        # Log the error but continue saving the document
-                        print(f"Error processing document with AI: {e}")
+                        audio_data = None
+                        print(f"Error generating audio: {e}")
 
             # Save the document and other relationships
             document.save()
             form.save_m2m()
+
+            # Save audio if we have it
+            if ai_description and audio_data:
+                filename = f"audio_{document.uuid}.wav"
+                document.ai_audio.save(filename, ContentFile(audio_data), save=True)
 
             messages.success(request, f'Dokument "{document.title}" został zaktualizowany.')
             return redirect('document_detail', uuid=document.uuid)

@@ -108,8 +108,10 @@ class Document(models.Model):
                              null=True, blank=True, verbose_name="Zespół")
     users = models.ManyToManyField(UserProfile, related_name='documents', verbose_name="Użytkownicy")
 
-    # AI
+    # AI fields
     ai_description = models.TextField(blank=True, null=True, verbose_name="Opis AI")
+    ai_audio = models.FileField(upload_to='documents/audio/', blank=True, null=True,
+                                storage=GoogleCloudStorage(), verbose_name="Audio AI")
 
     class Meta:
         verbose_name = "Dokument"

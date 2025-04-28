@@ -9,7 +9,6 @@ from ..models import Project, Team, UserProfile, TeamMembership
 
 @login_required
 def dashboard(request):
-    """Widok głównej strony panelu administracyjnego"""
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     teams = user_profile.get_teams()
     projects = Project.objects.filter(teams__in=teams).distinct()
@@ -24,7 +23,6 @@ def dashboard(request):
 
 @login_required
 def team_list(request):
-    """Widok listy zespołów"""
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     teams = user_profile.get_teams()
 
@@ -37,11 +35,9 @@ def team_list(request):
 
 @login_required
 def team_detail(request, uuid):
-    """Widok szczegółów zespołu"""
     team = get_object_or_404(Team, uuid=uuid)
     members = team.get_members()
 
-    # Sprawdzamy czy użytkownik jest członkiem tego zespołu
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     try:
         membership = TeamMembership.objects.get(user_profile=user_profile, team=team)
@@ -67,7 +63,6 @@ def team_detail(request, uuid):
 
 @login_required
 def project_list(request):
-    """Widok listy projektów"""
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     teams = user_profile.get_teams()
     projects = Project.objects.filter(teams__in=teams).distinct()
@@ -81,11 +76,9 @@ def project_list(request):
 
 @login_required
 def project_detail(request, uuid):
-    """Widok szczegółów projektu"""
     project = get_object_or_404(Project, uuid=uuid)
     teams = project.teams.all()
 
-    # Sprawdzamy czy użytkownik ma dostęp do tego projektu
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     user_teams = user_profile.get_teams()
     has_access = any(team in user_teams for team in teams) or user_profile.role == 'admin'
@@ -94,7 +87,6 @@ def project_detail(request, uuid):
         messages.error(request, 'Nie masz dostępu do tego projektu.')
         return redirect('dashboard')
 
-    # Sprawdzamy role użytkownika w każdym zespole projektu
     user_roles = {}
     is_project_admin = False
 
@@ -107,8 +99,6 @@ def project_detail(request, uuid):
         except TeamMembership.DoesNotExist:
             user_roles[team.id] = None
 
-    # Użytkownik jest administratorem projektu, jeśli jest adminem co najmniej jednego zespołu
-    # lub ma globalną rolę admina
     is_project_admin = is_project_admin or user_profile.role == 'admin'
 
     context = {
@@ -123,19 +113,15 @@ def project_detail(request, uuid):
 
 @login_required
 def create_team(request):
-    """Widok tworzenia nowego zespołu"""
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-    # Formularz dla zespołu
     TeamForm = modelform_factory(Team, fields=['name', 'description', 'logo', 'project'])
 
     if request.method == 'POST':
         form = TeamForm(request.POST, request.FILES)
         if form.is_valid():
-            # Tworzymy nowy zespół
             team = form.save()
 
-            # Dodajemy użytkownika jako administratora zespołu
             TeamMembership.objects.create(
                 user_profile=user_profile,
                 team=team,
@@ -145,7 +131,6 @@ def create_team(request):
             messages.success(request, 'Zespół został pomyślnie utworzony. Jesteś jego administratorem.')
             return redirect('team_detail', uuid=team.uuid)
     else:
-        # Jeśli jest przekazany parametr project, predefiniujemy projekt
         project_id = request.GET.get('project')
         if project_id:
             try:
@@ -165,26 +150,20 @@ def create_team(request):
 
 @login_required
 def create_project(request):
-    """Widok tworzenia nowego projektu"""
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-
-    # Formularz dla projektu
     ProjectForm = modelform_factory(Project, fields=['name', 'description'])
 
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
-            # Tworzymy nowy projekt
             project = form.save()
 
-            # Tworzymy główny zespół dla projektu
             initial_team = Team.objects.create(
                 name=f"Główny zespół - {project.name}",
                 description=f"Domyślny zespół zarządzający projektem {project.name}",
                 project=project
             )
 
-            # Dodajemy użytkownika jako administratora zespołu
             TeamMembership.objects.create(
                 user_profile=user_profile,
                 team=initial_team,
@@ -192,12 +171,11 @@ def create_project(request):
             )
 
             messages.success(request,
-                             f'Projekt "{project.name}" został pomyślnie utworzony. Jesteś administratorem głównego zespołu.')
+                             f'Projekt "{project.name}" został pomyślnie utworzony. Jesteś administratorem głównego '
+                             f'zespołu.')
 
-            # Przekierowanie do szczegółów projektu - upewnij się, że ten URL działa poprawnie
             return redirect('project_detail', uuid=project.uuid)
         else:
-            # Wyświetl komunikat o błędach formularza
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'Błąd w polu {field}: {error}')
@@ -213,11 +191,9 @@ def create_project(request):
 
 @login_required
 def manage_team_members(request, uuid):
-    """Widok zarządzania członkami zespołu"""
     team = get_object_or_404(Team, uuid=uuid)
     user_profile = get_object_or_404(UserProfile, user=request.user)
 
-    # Sprawdź, czy użytkownik jest administratorem zespołu
     try:
         membership = TeamMembership.objects.get(user_profile=user_profile, team=team)
         is_admin = membership.role == 'admin' or user_profile.role == 'admin'
@@ -228,7 +204,6 @@ def manage_team_members(request, uuid):
         messages.error(request, 'Nie masz uprawnień do zarządzania członkami tego zespołu.')
         return redirect('team_detail', uuid=team.uuid)
 
-    # Obsługa formularza dodawania/usuwania członków i zmiany ról
     if request.method == 'POST':
         action = request.POST.get('action')
 
@@ -240,7 +215,6 @@ def manage_team_members(request, uuid):
                 user = User.objects.get(username=username)
                 member_profile, created = UserProfile.objects.get_or_create(user=user)
 
-                # Sprawdź, czy użytkownik już jest członkiem zespołu
                 membership, created = TeamMembership.objects.get_or_create(
                     user_profile=member_profile,
                     team=team,
@@ -277,7 +251,6 @@ def manage_team_members(request, uuid):
                 membership = TeamMembership.objects.get(id=member_id, team=team)
                 username = membership.user_profile.user.username
 
-                # Nie pozwól na usunięcie ostatniego administratora
                 if membership.role == 'admin' and TeamMembership.objects.filter(team=team, role='admin').count() <= 1:
                     messages.error(request, 'Nie można usunąć ostatniego administratora zespołu.')
                 else:
@@ -286,7 +259,6 @@ def manage_team_members(request, uuid):
             except TeamMembership.DoesNotExist:
                 messages.error(request, 'Członek zespołu nie został znaleziony.')
 
-    # Pobierz wszystkich członków zespołu z ich rolami
     memberships = TeamMembership.objects.filter(team=team).select_related('user_profile__user')
 
     context = {
@@ -300,10 +272,8 @@ def manage_team_members(request, uuid):
 
 @login_required
 def edit_project(request, uuid):
-    """Widok edycji projektu"""
     project = get_object_or_404(Project, uuid=uuid)
 
-    # Sprawdzamy czy użytkownik ma dostęp do tego projektu
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     teams = project.teams.all()
     user_teams = user_profile.get_teams()
@@ -313,7 +283,6 @@ def edit_project(request, uuid):
         messages.error(request, 'Nie masz dostępu do tego projektu.')
         return redirect('dashboard')
 
-    # Sprawdzamy czy użytkownik jest adminem projektu
     is_project_admin = False
     for team in teams:
         try:
@@ -330,7 +299,6 @@ def edit_project(request, uuid):
         messages.error(request, 'Nie masz uprawnień do edycji tego projektu.')
         return redirect('project_detail', uuid=project.uuid)
 
-    # Formularz dla projektu
     ProjectForm = modelform_factory(Project, fields=['name', 'description'])
 
     if request.method == 'POST':
@@ -352,10 +320,8 @@ def edit_project(request, uuid):
 
 @login_required
 def delete_project(request, uuid):
-    """Widok usuwania projektu"""
     project = get_object_or_404(Project, uuid=uuid)
 
-    # Sprawdzamy czy użytkownik ma dostęp do tego projektu
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     teams = project.teams.all()
     user_teams = user_profile.get_teams()
@@ -365,7 +331,6 @@ def delete_project(request, uuid):
         messages.error(request, 'Nie masz dostępu do tego projektu.')
         return redirect('dashboard')
 
-    # Sprawdzamy czy użytkownik jest adminem projektu
     is_project_admin = False
     for team in teams:
         try:
@@ -397,7 +362,6 @@ def delete_project(request, uuid):
 
 @login_required
 def edit_team(request, uuid):
-    """Widok edycji zespołu"""
     team = get_object_or_404(Team, uuid=uuid)
 
     # Sprawdzamy czy użytkownik jest administratorem tego zespołu
@@ -412,7 +376,6 @@ def edit_team(request, uuid):
         messages.error(request, 'Nie masz uprawnień do edycji tego zespołu.')
         return redirect('team_detail', uuid=team.uuid)
 
-    # Formularz dla zespołu
     TeamForm = modelform_factory(Team, fields=['name', 'description', 'logo', 'project'])
 
     if request.method == 'POST':

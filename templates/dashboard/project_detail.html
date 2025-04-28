@@ -218,8 +218,14 @@
                                     {{ document.created_at|date:"d.m.Y" }}
                                 </span>
                                         </div>
-                                        <a href="{% url 'document_detail' document.uuid %}"
-                                           class="btn btn-sm btn-outline">Szczegóły</a>
+                                        <div class="document-actions">
+                                            <!-- Fix: Ensure the document has a UUID before creating the URL -->
+                                            {% if document.uuid %}
+                                                <a href="{% url 'document_detail' document.uuid %}" class="btn btn-sm btn-outline">Szczegóły</a>
+                                            {% else %}
+                                                <span class="btn btn-sm btn-outline disabled">Szczegóły</span>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -300,7 +306,12 @@
                                     {{ team.created_at|date:"d.m.Y" }}
                                 </span>
                                 </div>
-                                <a href="{% url 'team_detail' team.uuid %}" class="btn btn-sm btn-outline">Szczegóły</a>
+                                <!-- Make sure team has a UUID before creating the link -->
+                                {% if team.uuid %}
+                                    <a href="{% url 'team_detail' team.uuid %}" class="btn btn-sm btn-outline">Szczegóły</a>
+                                {% else %}
+                                    <span class="btn btn-sm btn-outline disabled">Szczegóły</span>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}

@@ -121,7 +121,12 @@
                                 </span>
                                 </div>
                                 <div class="document-actions">
-                                    <a href="{% url 'document_detail' document.uuid %}" class="btn btn-sm btn-outline">Szczegóły</a>
+                                    <!-- Check if document has a UUID first -->
+                                    {% if document.uuid %}
+                                        <a href="{% url 'document_detail' document.uuid %}" class="btn btn-sm btn-outline">Szczegóły</a>
+                                    {% else %}
+                                        <span class="btn btn-sm btn-outline disabled">Szczegóły</span>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

@@ -34,7 +34,6 @@ def register(request):
         confirm_password = request.POST.get('confirm_password')
         terms = request.POST.get('terms', False)
 
-        # Validation
         if not (username and email and password and confirm_password):
             messages.error(request, 'Wszystkie pola są wymagane.')
             return render(request, 'auth/register.html')
@@ -47,7 +46,6 @@ def register(request):
             messages.error(request, 'Musisz zaakceptować regulamin.')
             return render(request, 'auth/register.html')
 
-        # Create user
         try:
             user = User.objects.create_user(username=username, email=email, password=password)
             messages.success(request, 'Rejestracja zakończona pomyślnie. Możesz się teraz zalogować.')

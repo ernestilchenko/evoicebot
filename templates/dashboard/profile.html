@@ -1,0 +1,402 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Profil - Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h1>Profil</h1>
+        <p>Informacje o Twoim koncie</p>
+    </div>
+    <div class="header-actions">
+        <a href="{% url 'edit_profile' %}" class="btn btn-outline btn-with-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Edytuj profil
+        </a>
+        <a href="{% url 'change_password' %}" class="btn btn-outline btn-with-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Zmień hasło
+        </a>
+    </div>
+</div>
+
+<div class="profile-container">
+    <!-- Profil info -->
+    <div class="profile-box">
+        <div class="profile-avatar">
+            <div class="avatar-circle">{{ user.username|first|upper }}</div>
+        </div>
+
+        <div class="profile-info">
+            <h2 class="profile-name">{{ user.username }}</h2>
+            <p class="profile-username">@{{ user.username }}</p>
+            <div class="profile-badge">{{ user_profile.get_role_display }}</div>
+        </div>
+
+        <div class="profile-details">
+            <div class="detail-row">
+                <div class="detail-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">{{ user.email }}</span>
+                </div>
+            </div>
+
+            {% if user_profile.phone %}
+            <div class="detail-row">
+                <div class="detail-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Telefon:</span>
+                    <span class="detail-value">{{ user_profile.phone }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Data dołączenia:</span>
+                    <span class="detail-value">{{ statistics.join_date|date:"d.m.Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats and groups -->
+    <div class="profile-data">
+        <div class="section">
+            <h2 class="section-heading">Statystyki</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number">{{ statistics.teams_count }}</div>
+                    <div class="stat-label">Grup</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">{{ statistics.projects_count }}</div>
+                    <div class="stat-label">Projektów</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">{{ statistics.documents_count }}</div>
+                    <div class="stat-label">Dokumentów</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-heading">Twoje grupy</h2>
+            {% if teams %}
+                <div class="teams-list">
+                    {% for team in teams %}
+                        <a href="{% url 'team_detail' team.uuid %}" class="team-item">
+                            <div class="team-icon">
+                                {% if team.logo %}
+                                    <img src="{{ team.logo.url }}" alt="{{ team.name }}">
+                                {% else %}
+                                    <div class="team-icon-placeholder">{{ team.name|first|upper }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="team-info">
+                                <div class="team-name">{{ team.name }}</div>
+                                {% if team.project %}
+                                    <div class="team-project">{{ team.project.name }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="team-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+                {% if teams.count > 5 %}
+                    <div class="view-all">
+                        <a href="{% url 'team_list' %}" class="view-all-link">Pokaż wszystkie</a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-message">Nie należysz do żadnej grupy.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Base elements */
+.profile-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 991px) {
+    .profile-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.section {
+    margin-bottom: 2rem;
+}
+
+.section-heading {
+    font-size: 1.25rem;
+    color: var(--white);
+    margin-bottom: 1.25rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.section-heading::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-left: 12px;
+}
+
+/* Profile box */
+.profile-box {
+    background-color: rgba(17, 24, 39, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 24px;
+    height: fit-content;
+}
+
+.profile-avatar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.profile-info {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--white);
+    margin: 0;
+}
+
+.profile-username {
+    color: var(--gray-light);
+    margin: 4px 0 12px;
+    font-size: 0.9rem;
+}
+
+.profile-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    border-radius: 12px;
+    background-color: rgba(99, 102, 241, 0.1);
+    color: var(--primary-light);
+    font-weight: 500;
+}
+
+.profile-details {
+    margin-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 20px;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 16px;
+    align-items: flex-start;
+}
+
+.detail-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: var(--gray-light);
+    flex-shrink: 0;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    color: var(--gray-light);
+    margin-bottom: 2px;
+}
+
+.detail-value {
+    color: var(--white);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+/* Stats section */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.stat-box {
+    background-color: rgba(17, 24, 39, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    color: var(--gray-light);
+    font-size: 0.9rem;
+}
+
+/* Teams list */
+.teams-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.team-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: rgba(17, 24, 39, 0.6);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.team-item:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.team-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.team-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-icon-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-weight: 600;
+}
+
+.team-info {
+    flex: 1;
+}
+
+.team-name {
+    color: var(--white);
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.team-project {
+    color: var(--gray-light);
+    font-size: 0.8rem;
+}
+
+.team-arrow {
+    color: var(--gray-light);
+    margin-left: 8px;
+}
+
+.view-all {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.view-all-link {
+    color: var(--primary-light);
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}
+
+.empty-message {
+    color: var(--gray-light);
+    text-align: center;
+    padding: 32px;
+    background-color: rgba(17, 24, 39, 0.6);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+</style>
+{% endblock %}

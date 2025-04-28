@@ -1,0 +1,98 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Edytuj profil - Dashboard{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div class="header-back">
+        <a href="{% url 'profile' %}" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Wróć do profilu
+        </a>
+    </div>
+</div>
+
+<div class="form-container">
+    <div class="form-header">
+        <h2>Edytuj profil</h2>
+        <p>Zmień swoje dane osobowe</p>
+    </div>
+
+    <form method="post" class="form-custom server-submit">
+        {% csrf_token %}
+
+        {% if user_form.errors or profile_form.errors %}
+        <div class="form-errors">
+            <div class="error-message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div>
+                    <h4>Wystąpiły błędy w formularzu</h4>
+                    <p>Sprawdź formularz i popraw błędy przed zapisaniem.</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="form-group {% if user_form.first_name.errors %}has-error{% endif %}">
+            <label for="{{ user_form.first_name.id_for_label }}" class="form-label">Imię</label>
+            <input type="text" name="first_name" id="{{ user_form.first_name.id_for_label }}" class="form-control"
+                   value="{{ user_form.first_name.value|default:'' }}">
+            {% if user_form.first_name.errors %}
+                <div class="input-error">{{ user_form.first_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if user_form.last_name.errors %}has-error{% endif %}">
+            <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Nazwisko</label>
+            <input type="text" name="last_name" id="{{ user_form.last_name.id_for_label }}" class="form-control"
+                   value="{{ user_form.last_name.value|default:'' }}">
+            {% if user_form.last_name.errors %}
+                <div class="input-error">{{ user_form.last_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if user_form.email.errors %}has-error{% endif %}">
+            <label for="{{ user_form.email.id_for_label }}" class="form-label">Email*</label>
+            <input type="email" name="email" id="{{ user_form.email.id_for_label }}" class="form-control" required
+                   value="{{ user_form.email.value|default:'' }}">
+            {% if user_form.email.errors %}
+                <div class="input-error">{{ user_form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if profile_form.phone.errors %}has-error{% endif %}">
+            <label for="{{ profile_form.phone.id_for_label }}" class="form-label">Telefon</label>
+            <input type="tel" name="phone" id="{{ profile_form.phone.id_for_label }}" class="form-control"
+                   value="{{ profile_form.phone.value|default:'' }}">
+            {% if profile_form.phone.errors %}
+                <div class="input-error">{{ profile_form.phone.errors.0 }}</div>
+            {% endif %}
+            <div class="form-hint">Podaj numer telefonu (opcjonalnie).</div>
+        </div>
+
+        <div class="form-group {% if profile_form.description.errors %}has-error{% endif %}">
+            <label for="{{ profile_form.description.id_for_label }}" class="form-label">O mnie</label>
+            <textarea name="description" id="{{ profile_form.description.id_for_label }}" class="form-control" rows="4">{{ profile_form.description.value|default:'' }}</textarea>
+            {% if profile_form.description.errors %}
+                <div class="input-error">{{ profile_form.description.errors.0 }}</div>
+            {% endif %}
+            <div class="form-hint">Napisz krótko o sobie (opcjonalnie).</div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'profile' %}" class="btn btn-outline">Anuluj</a>
+            <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

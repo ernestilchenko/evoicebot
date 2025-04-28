@@ -8,6 +8,12 @@ urlpatterns = [
     path('app/register/', register, name='register'),
     path('app/logout/', logout, name='logout'),
 
+    # Profile URLs
+    path('app/profile/', profile, name='profile'),
+    path('app/profile/edit/', edit_profile, name='edit_profile'),
+    path('app/profile/change-password/', change_password, name='change_password'),
+
+    # Dashboard
     path('app/dashboard/', dashboard, name='dashboard'),
     path('app/dashboard/teams/', team_list, name='team_list'),
     path('app/dashboard/teams/<uuid:uuid>/', team_detail, name='team_detail'),
