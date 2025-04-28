@@ -17,9 +17,6 @@ RUN apt-get update \
 # Copy project
 COPY . .
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
-
 # Expose port
 EXPOSE 8000
 
