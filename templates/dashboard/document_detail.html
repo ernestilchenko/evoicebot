@@ -34,8 +34,8 @@
                 </svg>
                 Usuń dokument
             </a>
-            {% if file_exists %}
-                <a href="{{ file_url }}" class="btn btn-primary btn-with-icon" download>
+            {% if file_exists and file_url %}
+                <a href="{{ file_url }}" class="btn btn-primary btn-with-icon" download target="_blank">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -44,6 +44,18 @@
                     </svg>
                     Pobierz dokument
                 </a>
+                <div class="access-warning" style="margin-top: 10px; color: #e67e22; font-size: 0.9em;">
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             style="vertical-align: middle;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        Uwaga: Jeśli pojawi się błąd dostępu, skontaktuj się z administratorem.
+                    </p>
+                </div>
             {% else %}
                 <button class="btn btn-outline btn-with-icon" disabled>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -159,6 +171,28 @@
                     <h2>Opis wygenerowany przez AI</h2>
                     <div class="ai-description">
                         <p>{{ document.ai_description }}</p>
+
+                        {% if audio_exists and audio_url %}
+                            <div class="ai-audio-player">
+                                <h3>Audio</h3>
+                                <audio controls>
+                                    <source src="{{ audio_url }}" type="audio/wav">
+                                    Twoja przeglądarka nie wspiera odtwarzania audio.
+                                </audio>
+                            </div>
+                        {% elif document.ai_description %}
+                            <div class="generate-audio-action">
+                                <a href="{% url 'document_detail' document.uuid %}?generate_audio=1" class="btn btn-outline btn-with-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                                    </svg>
+                                    Wygeneruj audio
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -284,6 +318,31 @@
             color: var(--gray-light);
             max-width: 400px;
             margin: 0.5rem auto;
+        }
+
+        .ai-audio-player {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(59, 130, 246, 0.05);
+            border-radius: 0.5rem;
+        }
+
+        .ai-audio-player h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: #3b82f6;
+        }
+
+        .ai-audio-player audio {
+            width: 100%;
+        }
+
+        .generate-audio-action {
+            margin-top: 1rem;
+        }
+
+        .access-warning svg {
+            margin-right: 5px;
         }
     </style>
 {% endblock %}

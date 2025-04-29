@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from ..api.openai import *
 from ..forms import DocumentForm
 from ..models import Document, UserProfile, Project, Team
+from ..utils.storage import check_gcs_file_exists
 
 
 @login_required
@@ -36,7 +37,6 @@ def document_detail(request, uuid):
     document = get_object_or_404(Document, uuid=uuid)
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-    # Sprawdź czy użytkownik ma dostęp do dokumentu
     has_access = (
             document.users.filter(id=user_profile.id).exists() or
             (document.team and document.team in user_profile.get_teams()) or
@@ -47,10 +47,21 @@ def document_detail(request, uuid):
         messages.error(request, 'Nie masz dostępu do tego dokumentu.')
         return redirect('document_list')
 
+    file_exists = False
+    file_url = None
+    file_size = 0
+
+    if document.file:
+        try:
+            file_exists = True
+            file_url = document.file.url
+        except Exception as e:
+            print(f"Error getting file URL: {str(e)}")
+            file_exists = False
+
     # Handle audio generation if requested
     if request.GET.get('generate_audio') and document.ai_description and not document.ai_audio:
         try:
-            # Generate audio from AI description
             result = generate_speech(document.ai_description)
 
             # Save audio file
@@ -62,13 +73,27 @@ def document_detail(request, uuid):
         except Exception as e:
             messages.error(request, f'Błąd generowania audio: {str(e)}')
 
+    audio_exists = False
+    audio_url = None
+
+    if document.ai_audio:
+        try:
+            audio_url = document.ai_audio.url
+            audio_exists = True
+        except Exception as e:
+            print(f"Error getting audio URL: {str(e)}")
+            audio_exists = False
+
     context = {
         'document': document,
+        'file_exists': file_exists,
+        'file_url': file_url,
+        'file_size': file_size,
+        'audio_exists': audio_exists,
+        'audio_url': audio_url,
     }
 
     return render(request, 'dashboard/document_detail.html', context)
-
-
 @login_required
 def create_document(request):
     """Widok tworzenia nowego dokumentu"""
