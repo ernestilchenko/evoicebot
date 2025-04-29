@@ -11,7 +11,6 @@ COPY requirements.txt .
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gcc python3-dev \
     && pip install -r requirements.txt \
-    && pip install gunicorn \
     && apt-get purge -y --auto-remove gcc python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,5 +20,5 @@ COPY . .
 # Expose port
 EXPOSE 8000
 
-# Run application with Gunicorn WSGI server
-CMD ["python", "-m", "gunicorn", "evoicebot.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Run application with Django's development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
