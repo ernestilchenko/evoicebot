@@ -176,7 +176,6 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 LOGIN_REDIRECT_URL = 'dashboard'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'main'
-SOCIALACCOUNT_LOGIN_ON_GET = True
 
 ACCOUNT_LOGIN_METHODS = {'email', 'username'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
@@ -197,3 +196,4 @@ SOCIALACCOUNT_PROVIDERS = {
 SITE_DOMAIN = 'voicevot.fun'
 SITE_NAME = 'voicebot'
 SITE_ID = 1
+SOCIALACCOUNT_LOGIN_ON_GET = True
