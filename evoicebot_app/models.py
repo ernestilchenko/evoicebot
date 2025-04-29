@@ -102,6 +102,7 @@ class Document(models.Model):
     file_type = models.CharField(max_length=50, verbose_name="Format pliku")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Data aktualizacji")
+    deadline = models.DateField(null=True, blank=True, verbose_name="Termin ważności")
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='documents',
                                 null=True, blank=True, verbose_name="Projekt")
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='documents',

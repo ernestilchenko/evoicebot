@@ -6,10 +6,11 @@ from .models import Document
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = ['title', 'description', 'file', 'project', 'team', 'users']
+        fields = ['title', 'description', 'file', 'deadline', 'project', 'team', 'users']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'users': forms.SelectMultiple(attrs={'class': 'form-control'})
+            'users': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'deadline': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
         }
 
     def clean_file(self):

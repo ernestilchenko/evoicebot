@@ -8,7 +8,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from ..api.openai import *
 from ..forms import DocumentForm
 from ..models import Document, UserProfile, Project, Team
-from ..utils.storage import check_gcs_file_exists
 
 
 @login_required
@@ -94,6 +93,8 @@ def document_detail(request, uuid):
     }
 
     return render(request, 'dashboard/document_detail.html', context)
+
+
 @login_required
 def create_document(request):
     """Widok tworzenia nowego dokumentu"""
@@ -191,6 +192,10 @@ def edit_document(request, uuid):
         if form.is_valid():
             document = form.save(commit=False)
 
+            # Inicjalizacja zmiennych przed użyciem
+            ai_description = None
+            audio_data = None
+
             # Process file with OpenAI if a new file is uploaded
             if 'file' in request.FILES:
                 file = request.FILES['file']
@@ -213,10 +218,7 @@ def edit_document(request, uuid):
                         if request.POST.get('generate_audio'):
                             result = generate_speech(ai_description)
                             audio_data = result["audio_data"]
-                        else:
-                            audio_data = None
                     except Exception as e:
-                        audio_data = None
                         print(f"Error generating audio: {e}")
 
             # Save the document and other relationships

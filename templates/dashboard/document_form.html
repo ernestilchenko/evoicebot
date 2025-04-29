@@ -6,7 +6,8 @@
 {% block dashboard_content %}
     <div class="dashboard-header">
         <div class="header-back">
-            <a href="{% if form.instance.pk %}{% url 'document_detail' form.instance.uuid %}{% else %}{% url 'document_list' %}{% endif %}"
+            <a href="
+                    {% if form.instance.pk %}{% url 'document_detail' form.instance.uuid %}{% else %}{% url 'document_list' %}{% endif %}"
                class="back-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -25,7 +26,8 @@
                 dokument{% endif %}</p>
         </div>
 
-        <form method="post" enctype="multipart/form-data" class="form-custom server-submit" action="{% if form.instance.pk %}{% url 'edit_document' form.instance.uuid %}{% else %}{% url 'create_document' %}{% endif %}">
+        <form method="post" enctype="multipart/form-data" class="form-custom server-submit" action="
+                {% if form.instance.pk %}{% url 'edit_document' form.instance.uuid %}{% else %}{% url 'create_document' %}{% endif %}">
             {% csrf_token %}
 
             {% if form.errors %}
@@ -63,6 +65,28 @@
                     <div class="input-error">{{ form.description.errors.0 }}</div>
                 {% endif %}
                 <div class="form-hint">Krótki opis zawartości dokumentu (opcjonalnie).</div>
+            </div>
+
+            <div class="form-group {% if form.deadline.errors %}has-error{% endif %}">
+                <label for="{{ form.deadline.id_for_label }}" class="form-label">Termin ważności</label>
+                <div class="date-picker-container">
+                    <input type="date" name="deadline" id="{{ form.deadline.id_for_label }}"
+                           class="form-control datepicker"
+                           value="{{ form.deadline.value|date:'Y-m-d'|default:'' }}">
+                    <span class="date-picker-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </span>
+                </div>
+                {% if form.deadline.errors %}
+                    <div class="input-error">{{ form.deadline.errors.0 }}</div>
+                {% endif %}
+                <div class="form-hint">Wybierz datę, do kiedy dokument jest ważny (opcjonalnie).</div>
             </div>
 
             {% if form.instance.ai_description %}
@@ -198,8 +222,43 @@
                 </button>
             </div>
         </form>
-
     </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .date-picker-container {
+            position: relative;
+        }
+
+        .date-picker-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-light);
+            pointer-events: none;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Niestandardowy styl dla kalendarza po otwarciu (działa tylko w niektórych przeglądarkach) */
+        input[type="date"]::-webkit-datetime-edit {
+            color: var(--white);
+        }
+
+        input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+            padding: 0;
+        }
+    </style>
 {% endblock %}
 
 {% block extra_js %}
@@ -220,10 +279,21 @@
             const audioCheckbox = document.getElementById('generate_audio');
 
             if (fileInput && audioCheckbox && audioCheckbox.disabled) {
-                fileInput.addEventListener('change', function() {
+                fileInput.addEventListener('change', function () {
                     if (this.files.length > 0) {
                         audioCheckbox.disabled = false;
                     }
+                });
+            }
+
+            // Niestandardowy DatePicker (jeśli jest dostępny flatpickr lub podobna biblioteka)
+            if (typeof flatpickr !== 'undefined') {
+                flatpickr(".datepicker", {
+                    dateFormat: "Y-m-d",
+                    altInput: true,
+                    altFormat: "j F Y",
+                    locale: "pl",
+                    theme: "dark"
                 });
             }
         });

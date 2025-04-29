@@ -136,6 +136,16 @@
                         </svg>
                         Utworzono: {{ document.created_at|date:"d.m.Y" }}
                     </span>
+                        {% if document.deadline %}
+                            <span class="document-deadline">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Ważny do: {{ document.deadline|date:"d.m.Y" }}
+                    </span>
+                        {% endif %}
                         {% if file_exists %}
                             <span class="document-size">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -182,9 +192,12 @@
                             </div>
                         {% elif document.ai_description %}
                             <div class="generate-audio-action">
-                                <a href="{% url 'document_detail' document.uuid %}?generate_audio=1" class="btn btn-outline btn-with-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <a href="{% url 'document_detail' document.uuid %}?generate_audio=1"
+                                   class="btn btn-outline btn-with-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round">
                                         <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                                         <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                                         <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
@@ -233,6 +246,23 @@
                     <div class="detail-item">
                         <span class="detail-label">Ostatnia aktualizacja</span>
                         <span class="detail-value">{{ document.updated_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Termin ważności</span>
+                        <span class="detail-value">
+                        {% if document.deadline %}
+                            {% now "Y-m-d" as today %}
+                            {% if document.deadline|date:"Y-m-d" < today %}
+                                <span style="color: #ef4444;">{{ document.deadline|date:"d.m.Y" }} (dokument nieaktualny)</span>
+                            {% elif document.deadline|date:"Y-m-d" == today %}
+                                <span style="color: #f59e0b;">{{ document.deadline|date:"d.m.Y" }} (wygasa dzisiaj)</span>
+                            {% else %}
+                                {{ document.deadline|date:"d.m.Y" }}
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">Nie określono</span>
+                        {% endif %}
+                        </span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Rozmiar pliku</span>
@@ -343,6 +373,25 @@
 
         .access-warning svg {
             margin-right: 5px;
+        }
+
+        .document-deadline {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 1rem;
+            color: var(--gray-light);
+        }
+
+        .document-deadline svg {
+            margin-right: 0.5rem;
+        }
+
+        .document-deadline.expired {
+            color: #ef4444;
+        }
+
+        .document-deadline.expires-soon {
+            color: #f59e0b;
         }
     </style>
 {% endblock %}
