@@ -193,7 +193,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-SITE_DOMAIN = 'voicevot.fun'
+SITE_DOMAIN = 'voicebot.fun'
 SITE_NAME = 'voicebot'
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
