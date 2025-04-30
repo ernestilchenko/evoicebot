@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.telegram'
 ]
 
 MIDDLEWARE = [
@@ -153,6 +154,7 @@ GS_CREDENTIALS_FILE = os.path.join(BASE_DIR, 'voicebot-455812-24243b5732cd.json'
 
 if os.path.isfile(GS_CREDENTIALS_FILE):
     from google.oauth2 import service_account
+
     GS_CREDENTIALS = service_account.Credentials.from_service_account_file(GS_CREDENTIALS_FILE)
 else:
     # Si no existe, asumimos que estamos en Google Cloud y usará las credenciales del entorno
@@ -196,6 +198,13 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         }
+    },
+    'telegram': {
+        'APP': {
+            'client_id': os.getenv('TOKEN_ID'),
+            'secret': os.getenv('TOKEN_TELEGRAM'),
+        },
+        'AUTH_PARAMS': {'auth_date_validity': 30},
     }
 }
 
