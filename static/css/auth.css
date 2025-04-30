@@ -212,6 +212,39 @@ body, html {
     color: var(--gray-light);
 }
 
+.checkbox-label.terms-label {
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.checkbox-label a {
+    color: var(--primary-light);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    position: relative;
+    margin: 0 4px;
+}
+
+.checkbox-label a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -1px;
+    left: 0;
+    background: var(--primary-light);
+    transition: width 0.3s ease;
+}
+
+.checkbox-label a:hover {
+    color: var(--primary);
+}
+
+.checkbox-label a:hover::after {
+    width: 100%;
+}
+
 .checkbox-custom {
     position: relative;
     display: inline-block;
@@ -222,6 +255,7 @@ body, html {
     border-radius: 4px;
     margin-right: 8px;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .checkbox-input:checked ~ .checkbox-label .checkbox-custom {
@@ -241,6 +275,10 @@ body, html {
     transform: rotate(45deg);
 }
 
+.checkbox-wrapper {
+    margin-bottom: 1.5rem;
+}
+
 .forgot-link {
     color: var(--primary-light);
     text-decoration: none;
@@ -249,7 +287,6 @@ body, html {
 
 .forgot-link:hover {
     color: var(--primary);
-    text-decoration: underline;
 }
 
 .btn {
@@ -323,6 +360,9 @@ body, html {
 }
 
 .social-login {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     margin-bottom: 1.5rem;
 }
 
@@ -335,6 +375,7 @@ body, html {
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--white);
     padding: 0.75rem 1.5rem;
+    text-decoration: none;
 }
 
 .btn-social:hover {
@@ -380,7 +421,6 @@ body, html {
     width: 100%;
 }
 
-/* Error styles */
 .error-message {
     color: var(--error);
     font-size: 0.75rem;
@@ -410,7 +450,6 @@ body, html {
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3) !important;
 }
 
-/* Messages */
 .messages-container {
     position: fixed;
     top: 20px;
@@ -461,7 +500,6 @@ body, html {
     flex-shrink: 0;
 }
 
-/* Responsive design */
 @media (max-width: 480px) {
     .auth-box {
         max-width: 100%;
@@ -476,10 +514,6 @@ body, html {
     .messages-container {
         width: calc(100% - 40px);
     }
-}
-
-.form-group {
-    position: relative;
 }
 
 .password-toggle {
