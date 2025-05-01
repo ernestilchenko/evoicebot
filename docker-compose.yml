@@ -10,9 +10,12 @@ services:
       - .:/app
       - static_volume:/app/static
       - media_volume:/app/media
+    env_file:
+      - .env
     environment:
       - DEBUG=1
-      - SECRET_KEY=django-insecure-l2)*ifxw)j)h5e!0)^!)7zsas)k6a#bg^x(m$$w@_ao80-tp@3
+      - DJANGO_SETTINGS_MODULE=evoicebot.settings
+      - PYTHONUNBUFFERED=1
     restart: always
     depends_on:
       - db
@@ -22,9 +25,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=evoicebot
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
     restart: always
 
 volumes:

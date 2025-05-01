@@ -9,11 +9,13 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import json
 import os
 from pathlib import Path
 
 from django.contrib import staticfiles
 from dotenv import load_dotenv
+from google.oauth2 import service_account
 
 load_dotenv()
 
@@ -135,7 +137,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
@@ -150,15 +151,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Google Cloud Storage settings
 GS_BUCKET_NAME = 'voicebot_storage'
-GS_CREDENTIALS_FILE = os.path.join(BASE_DIR, 'voicebot-455812-24243b5732cd.json')
+GOOGLE_CREDENTIALS = os.getenv('GOOGLE_CREDENTIALS')
 
-if os.path.isfile(GS_CREDENTIALS_FILE):
-    from google.oauth2 import service_account
-
-    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(GS_CREDENTIALS_FILE)
-else:
-    # Si no existe, asumimos que estamos en Google Cloud y usará las credenciales del entorno
-    GS_CREDENTIALS = None
+credentials_dict = json.loads(GOOGLE_CREDENTIALS)
+GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_dict)
 
 STORAGES = {
     "default": {
@@ -212,12 +208,10 @@ SITE_DOMAIN = 'voicebot.fun'
 SITE_NAME = 'voicebot'
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_USERNAME_REQUIRED = False
 SOCIALACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_ADAPTER = 'evoicebot_app.adapters.CustomSocialAccountAdapter'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True
