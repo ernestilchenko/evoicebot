@@ -62,7 +62,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add whitenoise for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -151,7 +151,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Google Cloud Storage settings
 GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME', 'voicebot_storage')
 GOOGLE_CREDENTIALS = os.getenv('GOOGLE_CREDENTIALS')
 
@@ -197,10 +196,8 @@ else:
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# OpenAI settings
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
-# Authentication settings
 LOGIN_REDIRECT_URL = 'dashboard'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'main'
 
@@ -237,6 +234,6 @@ SOCIALACCOUNT_USERNAME_REQUIRED = False
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_ADAPTER = 'evoicebot_app.adapters.CustomSocialAccountAdapter'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False

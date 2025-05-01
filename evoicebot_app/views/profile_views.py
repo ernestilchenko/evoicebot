@@ -9,17 +9,13 @@ from ..models import UserProfile
 
 @login_required
 def profile(request):
-    """Widok profilu użytkownika"""
     user = request.user
     user_profile, created = UserProfile.objects.get_or_create(user=user)
 
-    # Dane dla widoku profilu
     teams = user_profile.get_teams()
 
-    # Policzymy dokumenty przypisane bezpośrednio do użytkownika
     documents_count = user_profile.documents.count()
 
-    # Statystyki
     statistics = {
         'teams_count': teams.count(),
         'documents_count': documents_count,
@@ -30,7 +26,7 @@ def profile(request):
     context = {
         'user_profile': user_profile,
         'statistics': statistics,
-        'teams': teams[:5],  # Pokaż tylko 5 ostatnich grup
+        'teams': teams[:5],
     }
 
     return render(request, 'dashboard/profile.html', context)
@@ -38,11 +34,9 @@ def profile(request):
 
 @login_required
 def edit_profile(request):
-    """Widok edycji profilu użytkownika"""
     user = request.user
     user_profile, created = UserProfile.objects.get_or_create(user=user)
 
-    # Formularze dla użytkownika i profilu
     UserForm = modelform_factory(User, fields=['first_name', 'last_name', 'email'])
     ProfileForm = modelform_factory(UserProfile, fields=['phone', 'description'])
 
@@ -70,7 +64,6 @@ def edit_profile(request):
 
 @login_required
 def change_password(request):
-    """Widok zmiany hasła użytkownika"""
     user = request.user
 
     if request.method == 'POST':
@@ -78,7 +71,6 @@ def change_password(request):
         new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_password')
 
-        # Walidacja
         if not user.check_password(current_password):
             messages.error(request, 'Aktualne hasło jest nieprawidłowe.')
             return redirect('change_password')
@@ -91,7 +83,6 @@ def change_password(request):
             messages.error(request, 'Hasło musi mieć co najmniej 8 znaków.')
             return redirect('change_password')
 
-        # Zmiana hasła
         user.set_password(new_password)
         user.save()
         messages.success(request, 'Hasło zostało zmienione. Zaloguj się ponownie.')

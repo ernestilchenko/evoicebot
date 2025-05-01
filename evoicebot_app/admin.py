@@ -5,8 +5,6 @@ from .models import Project, Team, UserProfile, TeamMembership, Document
 
 
 # Register your models here.
-
-
 class TeamInline(admin.TabularInline):
     model = Team
     extra = 0
