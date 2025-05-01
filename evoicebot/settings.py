@@ -150,28 +150,49 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Google Cloud Storage settings
-GS_BUCKET_NAME = 'voicebot_storage'
+GS_BUCKET_NAME = os.getenv('GS_BUCKET_NAME', 'voicebot_storage')
 GOOGLE_CREDENTIALS = os.getenv('GOOGLE_CREDENTIALS')
 
-credentials_dict = json.loads(GOOGLE_CREDENTIALS)
-GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_dict)
+if GOOGLE_CREDENTIALS:
+    try:
+        credentials_dict = json.loads(GOOGLE_CREDENTIALS)
+        GS_CREDENTIALS = service_account.Credentials.from_service_account_info(credentials_dict)
 
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
-        "OPTIONS": {
-            "bucket_name": GS_BUCKET_NAME,
-            "credentials": GS_CREDENTIALS,
-            "location": "media",
-            "querystring_auth": False,
+        STORAGES = {
+            "default": {
+                "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+                "OPTIONS": {
+                    "bucket_name": GS_BUCKET_NAME,
+                    "credentials": GS_CREDENTIALS,
+                    "location": "media",
+                    "querystring_auth": False,
+                },
+            },
+            "staticfiles": {
+                "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            },
+        }
+
+        MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
+        print("Using Google Cloud Storage for media files")
+    except Exception as e:
+        print(f"Error setting up Google Cloud Storage: {e}")
+        STORAGES = {
+            "staticfiles": {
+                "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            },
+        }
+        MEDIA_URL = '/media/'
+        print("Using local storage for media files (GCS error)")
+else:
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+    }
+    MEDIA_URL = '/media/'
+    print("Using local storage for media files (no GCS credentials)")
 
-MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # OpenAI settings
