@@ -4,10 +4,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+          content="{% block meta_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień. Zwiększ skuteczność komunikacji z klientami i pracownikami poprzez automatyczne powiadomienia głosowe.{% endblock %}">
+    <meta name="keywords"
+          content="{% block meta_keywords %}asystent głosowy, powiadomienia głosowe, automatyzacja powiadomień, komunikacja biznesowa, voicebot{% endblock %}">
+    <meta name="author" content="EvoiceBot">
+    <meta name="robots" content="index, follow">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+    <meta property="og:title" content="{% block og_title %}{{ block.super }}{% endblock %}">
+    <meta property="og:description"
+          content="{% block og_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień. Zwiększ skuteczność komunikacji z klientami i pracownikami.{% endblock %}">
+    <meta property="og:image" content="
+            {% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/evoicebot-social.jpg' %}{% endblock %}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+    <meta property="twitter:title" content="{% block twitter_title %}{{ block.super }}{% endblock %}">
+    <meta property="twitter:description"
+          content="{% block twitter_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień.{% endblock %}">
+    <meta property="twitter:image" content="
+            {% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/evoicebot-social.jpg' %}{% endblock %}">
+
     <title>{% block title %}EvoiceBot - Inteligentny asystent głosowy{% endblock %}</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block extra_css %}{% endblock %}
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "EvoiceBot",
+          "url": "{{ request.scheme }}://{{ request.get_host }}",
+      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo.png' %}",
+      "description": "EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień i komunikacji biznesowej.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "ul. Nowogrodzka 50",
+        "addressLocality": "Warszawa",
+        "postalCode": "00-695",
+        "addressCountry": "PL"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+48123456789",
+        "contactType": "customer service",
+        "email": "kontakt@evoicebot.com"
+      },
+      "sameAs": [
+        "https://www.facebook.com/evoicebot",
+        "https://www.linkedin.com/company/evoicebot",
+        "https://twitter.com/evoicebot"
+      ]
+    }
+    </script>
 </head>
 <body>
 <div class="app-container">
@@ -336,7 +402,8 @@
 
                     <div class="about-content">
                         <div class="about-image">
-                            <img src="{% static 'images/ChatGPT Image 30 апр. 2025 г., 17_54_35.png' %}" alt="O EvoiceBot"
+                            <img src="{% static 'images/ChatGPT Image 30 апр. 2025 г., 17_54_35.png' %}"
+                                 alt="O EvoiceBot"
                                  onerror="this.style.display='none'">
                         </div>
                         <div class="about-text">
