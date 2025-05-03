@@ -5,34 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Google Site Verification -->
+    <meta name="google-site-verification" content="RTOYqpeuZCcvPdoUTQx_QQJC80ChPSadIJrkkPFZHoU" />
+
     <!-- SEO Meta Tags -->
-    <meta name="description"
-          content="{% block meta_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień. Zwiększ skuteczność komunikacji z klientami i pracownikami poprzez automatyczne powiadomienia głosowe.{% endblock %}">
-    <meta name="keywords"
-          content="{% block meta_keywords %}asystent głosowy, powiadomienia głosowe, automatyzacja powiadomień, komunikacja biznesowa, voicebot{% endblock %}">
+    <meta name="description" content="{% block meta_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień. Zwiększ skuteczność komunikacji z klientami i pracownikami poprzez automatyczne powiadomienia głosowe.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}asystent głosowy, powiadomienia głosowe, automatyzacja powiadomień, komunikacja biznesowa, voicebot{% endblock %}">
     <meta name="author" content="EvoiceBot">
     <meta name="robots" content="index, follow">
-    <meta name="google-site-verification" content="RTOYqpeuZCcvPdoUTQx_QQJC80ChPSadIJrkkPFZHoU" />
+
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
-    <meta property="og:title" content="{% block og_title %}{{ block.super }}{% endblock %}">
-    <meta property="og:description"
-          content="{% block og_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień. Zwiększ skuteczność komunikacji z klientami i pracownikami.{% endblock %}">
-    <meta property="og:image" content="
-            {% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/evoicebot-social.jpg' %}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}EvoiceBot - Inteligentny asystent głosowy{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień. Zwiększ skuteczność komunikacji z klientami i pracownikami.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/evoicebot-social.jpg' %}{% endblock %}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
-    <meta property="twitter:title" content="{% block twitter_title %}{{ block.super }}{% endblock %}">
-    <meta property="twitter:description"
-          content="{% block twitter_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień.{% endblock %}">
-    <meta property="twitter:image" content="
-            {% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/evoicebot-social.jpg' %}{% endblock %}">
+    <meta property="twitter:title" content="{% block twitter_title %}EvoiceBot - Inteligentny asystent głosowy{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień.{% endblock %}">
+    <meta property="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/evoicebot-social.jpg' %}{% endblock %}">
 
     <title>{% block title %}EvoiceBot - Inteligentny asystent głosowy{% endblock %}</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
@@ -47,11 +44,11 @@
 
     <!-- Structured Data / JSON-LD -->
     <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": "EvoiceBot",
-          "url": "{{ request.scheme }}://{{ request.get_host }}",
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "EvoiceBot",
+      "url": "{{ request.scheme }}://{{ request.get_host }}",
       "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'img/logo.png' %}",
       "description": "EvoiceBot - Inteligentny asystent głosowy do automatyzacji powiadomień i komunikacji biznesowej.",
       "address": {
