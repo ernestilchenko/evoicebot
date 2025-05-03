@@ -21,7 +21,9 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 from django.views.generic.base import TemplateView
+
 from evoicebot_app.sitemaps import StaticViewSitemap
+from evoicebot_app.views.sitemap_views import sitemap as custom_sitemap
 
 sitemaps = {
     'static': StaticViewSitemap,
@@ -30,8 +32,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('evoicebot_app.urls')),
     path('accounts/', include('allauth.urls')),
-
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('sitemap-django.xml', sitemap, {'sitemaps': sitemaps},
+         name='django.contrib.sitemaps.views.sitemap'),
+    path('sitemap.xml', custom_sitemap, name='sitemap'),
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
 ]
 
