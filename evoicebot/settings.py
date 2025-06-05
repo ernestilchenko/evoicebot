@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'evoicebot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('PGNAME'),
+        'NAME': os.getenv('PGDATABASE'),
         'USER': os.getenv('PGUSER'),
         'PASSWORD': os.getenv('PGPASSWORD'),
         'HOST': os.getenv('PGHOST'),
