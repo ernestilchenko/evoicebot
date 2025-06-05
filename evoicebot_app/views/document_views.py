@@ -2,12 +2,11 @@ import os
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.files.base import ContentFile
 from django.shortcuts import render, redirect, get_object_or_404
 
-from ..api.openai import *
 from ..forms import DocumentForm
 from ..models import Document, UserProfile, Project, Team
+from ..tasks import process_document_ai, generate_document_audio
 
 
 @login_required
@@ -55,17 +54,9 @@ def document_detail(request, uuid):
             file_exists = False
 
     if request.GET.get('generate_audio') and document.ai_description and not document.ai_audio:
-        try:
-            result = generate_speech(document.ai_description)
-
-            # Save audio file
-            filename = f"audio_{document.uuid}.wav"
-            document.ai_audio.save(filename, ContentFile(result["audio_data"]), save=True)
-
-            messages.success(request, 'Wygenerowano audio dla dokumentu.')
-            return redirect('document_detail', uuid=document.uuid)
-        except Exception as e:
-            messages.error(request, f'Błąd generowania audio: {str(e)}')
+        generate_document_audio.delay(document.id)
+        messages.info(request, 'Generowanie audio zostało rozpoczęte. Odśwież stronę za chwilę.')
+        return redirect('document_detail', uuid=document.uuid)
 
     audio_exists = False
     audio_url = None
@@ -101,33 +92,20 @@ def create_document(request):
 
             if 'file' in request.FILES:
                 file = request.FILES['file']
-
                 document.file_type = os.path.splitext(file.name)[1][1:].lower()
-
-                ai_description = analyze_document(file, document.file_type)
-                if ai_description:
-                    document.ai_description = ai_description
-
-                    try:
-                        if request.POST.get('generate_audio'):
-                            result = generate_speech(ai_description)
-
-                            audio_data = result["audio_data"]
-                        else:
-                            audio_data = None
-                    except Exception as e:
-                        audio_data = None
-                        print(f"Error generating audio: {e}")
 
             document.save()
             document.users.add(user_profile)
             form.save_m2m()
 
-            if ai_description and audio_data:
-                filename = f"audio_{document.uuid}.wav"
-                document.ai_audio.save(filename, ContentFile(audio_data), save=True)
+            if 'file' in request.FILES:
+                generate_audio = request.POST.get('generate_audio', False)
+                process_document_ai.delay(document.id, bool(generate_audio))
+                messages.success(request,
+                                 f'Dokument "{document.title}" został utworzony. Analiza AI została rozpoczęta.')
+            else:
+                messages.success(request, f'Dokument "{document.title}" został utworzony.')
 
-            messages.success(request, f'Dokument "{document.title}" został pomyślnie utworzony.')
             return redirect('document_detail', uuid=document.uuid)
     else:
         project_id = request.GET.get('project')
@@ -175,37 +153,27 @@ def edit_document(request, uuid):
         if form.is_valid():
             document = form.save(commit=False)
 
-            ai_description = None
-            audio_data = None
-
             if 'file' in request.FILES:
                 file = request.FILES['file']
-
                 document.file_type = os.path.splitext(file.name)[1][1:].lower()
 
-                ai_description = analyze_document(file, document.file_type)
-                if ai_description:
-                    document.ai_description = ai_description
+                if document.ai_audio:
+                    document.ai_audio.delete(save=False)
+                    document.ai_audio = None
 
-                    if document.ai_audio:
-                        document.ai_audio.delete(save=False)
-                        document.ai_audio = None
-
-                    try:
-                        if request.POST.get('generate_audio'):
-                            result = generate_speech(ai_description)
-                            audio_data = result["audio_data"]
-                    except Exception as e:
-                        print(f"Error generating audio: {e}")
+                document.ai_description = None
 
             document.save()
             form.save_m2m()
 
-            if ai_description and audio_data:
-                filename = f"audio_{document.uuid}.wav"
-                document.ai_audio.save(filename, ContentFile(audio_data), save=True)
+            if 'file' in request.FILES:
+                generate_audio = request.POST.get('generate_audio', False)
+                process_document_ai.delay(document.id, bool(generate_audio))
+                messages.success(request,
+                                 f'Dokument "{document.title}" został zaktualizowany. Analiza AI została rozpoczęta.')
+            else:
+                messages.success(request, f'Dokument "{document.title}" został zaktualizowany.')
 
-            messages.success(request, f'Dokument "{document.title}" został zaktualizowany.')
             return redirect('document_detail', uuid=document.uuid)
     else:
         form = DocumentForm(instance=document)
