@@ -16,6 +16,7 @@ from pathlib import Path
 from django.contrib import staticfiles
 from dotenv import load_dotenv
 from google.oauth2 import service_account
+from celery.schedules import crontab
 
 load_dotenv()
 
@@ -120,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Warsaw'
 USE_I18N = True
 USE_TZ = True
 
@@ -228,16 +229,42 @@ CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = 'Europe/Warsaw'
 CELERY_RESULT_EXPIRES = 3600
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
 CELERY_BEAT_SCHEDULE = {
     'cleanup-old-files': {
         'task': 'evoicebot_app.tasks.cleanup_old_files',
-        'schedule': 24 * 60 * 60,
+        'schedule': crontab(hour=2, minute=0),
     },
     'send-expiry-notifications': {
         'task': 'evoicebot_app.tasks.send_document_expiry_notifications',
-        'schedule': 60 * 60,
+        'schedule': crontab(hour=8, minute=0),
+    },
+    'send-daily-deadline-reminders': {
+        'task': 'evoicebot_app.tasks.send_daily_deadline_reminders',
+        'schedule': crontab(hour=9, minute=0),
+    },
+    'send-weekly-deadline-reminders': {
+        'task': 'evoicebot_app.tasks.send_weekly_deadline_reminders',
+        'schedule': crontab(hour=9, minute=0, day_of_week=1),
+    },
+    'update-call-statuses': {
+        'task': 'evoicebot_app.tasks.update_call_statuses',
+        'schedule': crontab(minute='*/5'),
+    },
+    'check-failed-calls-and-retry': {
+        'task': 'evoicebot_app.tasks.check_failed_calls_and_retry',
+        'schedule': crontab(minute='*/30'),
+    },
+    'send-daily-report': {
+        'task': 'evoicebot_app.tasks.send_daily_report',
+        'schedule': crontab(hour=18, minute=0),
+    },
+    'cleanup-old-calls': {
+        'task': 'evoicebot_app.tasks.cleanup_old_calls',
+        'schedule': crontab(hour=3, minute=0, day_of_week=0),
     },
 }
 

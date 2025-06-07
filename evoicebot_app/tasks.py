@@ -10,6 +10,7 @@ from django.utils import timezone
 from .api.openai import analyze_document, generate_speech
 from .api.twilio_service import TwilioService
 from .models import Document, VoiceCall
+from .utils.notification_utils import get_document_recipients_emails
 from .utils.twilio_utils import create_voice_message, get_document_recipients_phones
 
 
@@ -262,3 +263,92 @@ def send_document_notifications_batch(document_ids, phone_numbers, custom_messag
             })
 
     return results
+
+
+@shared_task
+def send_daily_deadline_reminders():
+    tomorrow = timezone.now().date() + timedelta(days=1)
+
+    documents_tomorrow = Document.objects.filter(deadline=tomorrow)
+    service = TwilioService()
+    calls_sent = 0
+    emails_sent = 0
+
+    for document in documents_tomorrow:
+        phone_numbers = get_document_recipients_phones(document)
+        emails = get_document_recipients_emails(document)
+
+        if phone_numbers:
+            message = create_voice_message(document)
+            urgent_message = f"PILNE: {message} Termin upływa jutro!"
+
+            calls = service.send_custom_message(phone_numbers, urgent_message)
+            calls_sent += len(calls) if calls else 0
+
+        if emails:
+            send_notification_email.delay(
+                subject=f"PILNE: Dokument '{document.title}' wygasa jutro",
+                message=f"Dokument '{document.title}' wygasa {document.deadline}. Sprawdź czy wymaga odnowienia.",
+                recipient_list=emails
+            )
+            emails_sent += 1
+
+    return f"Sent {calls_sent} calls and {emails_sent} emails for documents expiring tomorrow"
+
+
+@shared_task
+def send_weekly_deadline_reminders():
+    next_week = timezone.now().date() + timedelta(days=7)
+
+    documents_next_week = Document.objects.filter(deadline=next_week)
+    service = TwilioService()
+    calls_sent = 0
+    emails_sent = 0
+
+    for document in documents_next_week:
+        phone_numbers = get_document_recipients_phones(document)
+        emails = get_document_recipients_emails(document)
+
+        if phone_numbers:
+            message = create_voice_message(document)
+            reminder_message = f"Przypomnienie: {message} Termin upływa za tydzień."
+
+            calls = service.send_custom_message(phone_numbers, reminder_message)
+            calls_sent += len(calls) if calls else 0
+
+        if emails:
+            send_notification_email.delay(
+                subject=f"Przypomnienie: Dokument '{document.title}' wygasa za tydzień",
+                message=f"Dokument '{document.title}' wygasa {document.deadline}. Sprawdź czy wymaga odnowienia.",
+                recipient_list=emails
+            )
+            emails_sent += 1
+
+    return f"Sent {calls_sent} calls and {emails_sent} emails for documents expiring next week"
+
+
+@shared_task
+def send_immediate_deadline_alert(document_id):
+    try:
+        document = Document.objects.get(id=document_id)
+        service = TwilioService()
+
+        phone_numbers = get_document_recipients_phones(document)
+        emails = get_document_recipients_emails(document)
+
+        if phone_numbers:
+            message = create_voice_message(document)
+            alert_message = f"ALERT: {message} Termin upływa dzisiaj!"
+
+            calls = service.send_custom_message(phone_numbers, alert_message)
+
+        if emails:
+            send_notification_email.delay(
+                subject=f"ALERT: Dokument '{document.title}' wygasa dzisiaj!",
+                message=f"Dokument '{document.title}' wygasa dzisiaj ({document.deadline}). Natychmiastowa akcja wymagana!",
+                recipient_list=emails
+            )
+
+        return f"Sent immediate alerts for document {document.title}"
+    except Document.DoesNotExist:
+        return "Document not found"
