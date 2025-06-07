@@ -36,7 +36,6 @@ class Team(models.Model):
         return self.name
 
     def get_members(self):
-        """Zwraca wszystkich członków zespołu"""
         return UserProfile.objects.filter(team_memberships__team=self)
 
     class Meta:
@@ -59,11 +58,13 @@ class UserProfile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Data aktualizacji")
 
+    # Bot fields
+    telegram_id = models.BigIntegerField(unique=True, null=True, blank=True, verbose_name="Telegram ID")
+
     def __str__(self):
         return self.user.username
 
     def get_teams(self):
-        """Zwraca wszystkie zespoły, do których należy użytkownik"""
         return Team.objects.filter(memberships__user_profile=self)
 
     class Meta:
@@ -114,6 +115,22 @@ class Document(models.Model):
     ai_audio = models.FileField(upload_to='documents/audio/', blank=True, null=True,
                                 storage=GoogleCloudStorage(), verbose_name="Audio AI")
 
+    # Bot fields
+    file_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Telegram File ID")
+    mime_type = models.CharField(max_length=100, null=True, blank=True, verbose_name="MIME Type")
+    size = models.IntegerField(null=True, blank=True, verbose_name="File Size")
+    user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='bot_documents',
+                                     null=True, blank=True, verbose_name="User Profile")
+    expiration_date = models.DateTimeField(null=True, blank=True, verbose_name="Data wygaśnięcia")
+    telegram_reminder_sent = models.BooleanField(default=False, verbose_name="Telegram reminder sent")
+    sms_reminder_sent = models.BooleanField(default=False, verbose_name="SMS reminder sent")
+    call_reminder_sent = models.BooleanField(default=False, verbose_name="Call reminder sent")
+    call_attempts = models.IntegerField(default=0, verbose_name="Call attempts")
+    call_message_listened = models.BooleanField(default=False, verbose_name="Call message listened")
+    last_call_date = models.DateTimeField(null=True, blank=True, verbose_name="Last call date")
+    gcs_file_path = models.CharField(max_length=255, null=True, blank=True, verbose_name="GCS file path")
+    gcs_uploaded = models.BooleanField(default=False, verbose_name="GCS uploaded")
+
     class Meta:
         verbose_name = "Dokument"
         verbose_name_plural = "Dokumenty"
@@ -125,7 +142,6 @@ class Document(models.Model):
         return os.path.splitext(self.file.name)[1][1:].lower()
 
     def save(self, *args, **kwargs):
-        # Automatyczne ustawienie typu pliku na podstawie rozszerzenia
         if not self.file_type and self.file:
             self.file_type = self.get_file_extension()
         super().save(*args, **kwargs)
