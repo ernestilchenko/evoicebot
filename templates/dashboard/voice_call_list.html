@@ -1,0 +1,200 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Połączenia głosowe - Dashboard{% endblock %}
+
+{% block dashboard_content %}
+    <div class="dashboard-header">
+        <div>
+            <h1>Połączenia głosowe</h1>
+            <p>Zarządzaj powiadomieniami głosowymi</p>
+        </div>
+        <a href="{% url 'make_voice_call' %}" class="btn btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            Nowe połączenie
+        </a>
+    </div>
+
+    <div class="calls-container">
+        {% if calls %}
+            <div class="calls-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Numer odbiorcy</th>
+                            <th>Status</th>
+                            <th>Dokument</th>
+                            <th>Czas trwania</th>
+                            <th>Potwierdzenie</th>
+                            <th>Data utworzenia</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for call in calls %}
+                            <tr>
+                                <td>{{ call.to_number }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ call.status }}">
+                                        {% if call.status == 'initiated' %}Zainicjowane
+                                        {% elif call.status == 'ringing' %}Dzwoni
+                                        {% elif call.status == 'in-progress' %}W toku
+                                        {% elif call.status == 'completed' %}Zakończone
+                                        {% elif call.status == 'busy' %}Zajęty
+                                        {% elif call.status == 'no-answer' %}Brak odpowiedzi
+                                        {% elif call.status == 'failed' %}Nieudane
+                                        {% elif call.status == 'canceled' %}Anulowane
+                                        {% else %}{{ call.status }}{% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if call.document %}
+                                        <a href="{% url 'document_detail' call.document.uuid %}">{{ call.document.title }}</a>
+                                    {% else %}
+                                        <span class="text-muted">Wiadomość niestandardowa</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if call.duration %}
+                                        {{ call.duration }}s
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if call.confirmation_received %}
+                                        <span class="confirmation-yes">✓ Tak</span>
+                                    {% else %}
+                                        <span class="confirmation-no">✗ Nie</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ call.created_at|date:"d.m.Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'voice_call_detail' call.id %}" class="btn btn-sm btn-outline">Szczegóły</a>
+                                    {% if call.status in 'initiated,ringing,in-progress' %}
+                                        <a href="{% url 'end_call' call.id %}" class="btn btn-sm btn-danger">Zakończ</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+                     class="empty-icon">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <h3>Brak połączeń głosowych</h3>
+                <p>Nie wykonano jeszcze żadnych połączeń głosowych</p>
+                <a href="{% url 'make_voice_call' %}" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    Wykonaj pierwsze połączenie
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .calls-table {
+            background-color: rgba(31, 41, 55, 0.5);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+
+        .calls-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .calls-table th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray-light);
+            font-weight: 500;
+            background-color: rgba(17, 24, 39, 0.6);
+        }
+
+        .calls-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--white);
+        }
+
+        .calls-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-initiated { background-color: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .status-ringing { background-color: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .status-in-progress { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-completed { background-color: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .status-busy { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-no-answer { background-color: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+        .status-failed { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-canceled { background-color: rgba(107, 114, 128, 0.2); color: #6b7280; }
+
+        .confirmation-yes { color: #22c55e; }
+        .confirmation-no { color: #ef4444; }
+
+        @media (max-width: 768px) {
+            .calls-table {
+                overflow-x: auto;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tableRows = document.querySelectorAll('.calls-table tbody tr');
+            tableRows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateY(10px)';
+                row.style.transition = 'all 0.3s ease';
+
+                setTimeout(() => {
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateY(0)';
+                }, 50 * index);
+            });
+
+            setInterval(() => {
+                document.querySelectorAll('[data-call-id]').forEach(element => {
+                    const callId = element.getAttribute('data-call-id');
+                    fetch(`/app/dashboard/voice-calls/${callId}/update-status/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const statusBadge = element.querySelector('.status-badge');
+                            if (statusBadge) {
+                                statusBadge.className = `status-badge status-${data.status}`;
+                                statusBadge.textContent = data.status;
+                            }
+                        })
+                        .catch(error => console.log('Error updating status:', error));
+                });
+            }, 10000);
+        });
+    </script>
+{% endblock %}
