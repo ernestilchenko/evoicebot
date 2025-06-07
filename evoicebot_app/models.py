@@ -129,3 +129,51 @@ class Document(models.Model):
         if not self.file_type and self.file:
             self.file_type = self.get_file_extension()
         super().save(*args, **kwargs)
+
+
+class VoiceCall(models.Model):
+    CALL_STATUS_CHOICES = [
+        ('initiated', 'Initiated'),
+        ('ringing', 'Ringing'),
+        ('in-progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('busy', 'Busy'),
+        ('no-answer', 'No Answer'),
+        ('failed', 'Failed'),
+        ('canceled', 'Canceled'),
+    ]
+
+    sid = models.CharField(max_length=100, unique=True, verbose_name="Twilio SID")
+    to_number = models.CharField(max_length=20, verbose_name="Numer odbiorcy")
+    from_number = models.CharField(max_length=20, verbose_name="Numer nadawcy")
+    message_text = models.TextField(verbose_name="Treść wiadomości")
+    status = models.CharField(max_length=20, choices=CALL_STATUS_CHOICES, default='initiated', verbose_name="Status")
+    duration = models.IntegerField(null=True, blank=True, verbose_name="Czas trwania (sekundy)")
+    cost = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, verbose_name="Koszt")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Data aktualizacji")
+    answered_at = models.DateTimeField(null=True, blank=True, verbose_name="Data odebrania")
+    ended_at = models.DateTimeField(null=True, blank=True, verbose_name="Data zakończenia")
+
+    document = models.ForeignKey('Document', on_delete=models.SET_NULL, null=True, blank=True,
+                                 related_name='voice_calls', verbose_name="Dokument")
+    user_profile = models.ForeignKey('UserProfile', on_delete=models.SET_NULL, null=True, blank=True,
+                                     related_name='voice_calls', verbose_name="Profil użytkownika")
+    confirmation_received = models.BooleanField(default=False, verbose_name="Potwierdzenie otrzymane")
+
+    class Meta:
+        verbose_name = "Połączenie głosowe"
+        verbose_name_plural = "Połączenia głosowe"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Call to {self.to_number} - {self.status}"
+
+    def update_status_from_twilio(self):
+        from .api.twilio_service import TwilioService
+        service = TwilioService()
+        new_status = service.get_call_status(self.sid)
+        if new_status and new_status != self.status:
+            self.status = new_status
+            self.save()
+        return new_status

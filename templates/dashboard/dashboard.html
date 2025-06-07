@@ -38,9 +38,149 @@
         </div>
         <a href="{% url 'team_list' %}" class="card-link">Zarządzaj</a>
     </div>
+
+    <div class="dashboard-card">
+        <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+        </div>
+        <div class="card-content">
+            <h3>Dokumenty</h3>
+            <p class="card-value">{{ documents.count }}</p>
+        </div>
+        <a href="{% url 'document_list' %}" class="card-link">Zarządzaj</a>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+        </div>
+        <div class="card-content">
+            <h3>Połączenia</h3>
+            <p class="card-value">{{ voice_calls.count }}</p>
+        </div>
+        <a href="{% url 'voice_call_list' %}" class="card-link">Zarządzaj</a>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <h2>Szybkie akcje</h2>
+    <div class="actions-grid">
+        <a href="{% url 'create_project' %}" class="action-card">
+            <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+            </div>
+            <h3>Nowy projekt</h3>
+            <p>Utwórz nowy projekt i zaproś zespół</p>
+        </a>
+
+        <a href="{% url 'create_team' %}" class="action-card">
+            <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            <h3>Nowa grupa</h3>
+            <p>Stwórz zespół do współpracy</p>
+        </a>
+
+        <a href="{% url 'create_document' %}" class="action-card">
+            <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            <h3>Nowy dokument</h3>
+            <p>Dodaj dokument z AI analizą</p>
+        </a>
+
+        <a href="{% url 'make_voice_call' %}" class="action-card voice-action">
+            <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+            </div>
+            <h3>Połączenie głosowe</h3>
+            <p>Wyślij powiadomienie głosowe</p>
+        </a>
+    </div>
 </div>
 
 <div class="dashboard-sections">
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Ostatnie połączenia głosowe</h2>
+            <a href="{% url 'voice_call_list' %}" class="btn btn-sm btn-primary">Zobacz wszystkie</a>
+        </div>
+
+        <div class="section-content">
+            {% if recent_calls %}
+                <div class="recent-calls-list">
+                    {% for call in recent_calls %}
+                        <div class="call-item">
+                            <div class="call-info">
+                                <div class="call-number">{{ call.to_number }}</div>
+                                <div class="call-message">{{ call.message_text|truncatechars:80 }}</div>
+                                {% if call.document %}
+                                    <div class="call-document">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                        </svg>
+                                        {{ call.document.title }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="call-status">
+                                <span class="status-badge status-{{ call.status }}">
+                                    {% if call.status == 'completed' %}Zakończone
+                                    {% elif call.status == 'failed' %}Nieudane
+                                    {% elif call.status == 'busy' %}Zajęty
+                                    {% elif call.status == 'no-answer' %}Brak odpowiedzi
+                                    {% elif call.status == 'in-progress' %}W toku
+                                    {% elif call.status == 'ringing' %}Dzwoni
+                                    {% else %}{{ call.status|title }}{% endif %}
+                                </span>
+                                {% if call.confirmation_received %}
+                                    <span class="confirmation-badge">✓</span>
+                                {% endif %}
+                                <div class="call-time">{{ call.created_at|date:"d.m H:i" }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <p>Nie wykonano jeszcze żadnych połączeń głosowych</p>
+                    <a href="{% url 'make_voice_call' %}" class="btn btn-primary">Wykonaj pierwsze połączenie</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
     <div class="dashboard-section">
         <div class="section-header">
             <h2>Twoje projekty</h2>
@@ -52,18 +192,39 @@
                 <div class="project-list">
                     {% for project in projects %}
                         <div class="project-item">
-                            <h3>{{ project.name }}</h3>
-                            <p>{{ project.description|truncatechars:100 }}</p>
-                            <div class="project-meta">
-                                <span class="project-teams">{{ project.teams.count }} grup</span>
-                                <a href="{% url 'project_detail' project.uuid %}" class="project-link">Szczegóły</a>
+                            <div class="project-icon">
+                                {% if project.logo %}
+                                    <img src="{{ project.logo.url }}" alt="{{ project.name }}">
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                        <polyline points="2 17 12 22 22 17"></polyline>
+                                        <polyline points="2 12 12 17 22 12"></polyline>
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            <div class="project-info">
+                                <h3>{{ project.name }}</h3>
+                                <p>{{ project.description|truncatechars:100 }}</p>
+                                <div class="project-meta">
+                                    <span class="project-teams">{{ project.teams.count }} grup</span>
+                                    <span class="project-documents">{{ project.documents.count }} dokumentów</span>
+                                    <a href="{% url 'project_detail' project.uuid %}" class="project-link">Szczegóły</a>
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
                 <div class="empty-state">
-                    <p>Nie masz jeszcze żadnych projektów.</p>
+                    <div class="empty-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                    </div>
+                    <p>Nie masz jeszcze żadnych projektów</p>
                     <a href="{% url 'create_project' %}" class="btn btn-primary">Utwórz pierwszy projekt</a>
                 </div>
             {% endif %}
@@ -92,7 +253,8 @@
                                 <h3>{{ team.name }}</h3>
                                 <p>{{ team.description|truncatechars:100 }}</p>
                                 <div class="team-meta">
-                                    <span class="team-members">{{ team.members.count }} członków</span>
+                                    <span class="team-members">{{ team.get_members.count }} członków</span>
+                                    <span class="team-project">{{ team.project.name }}</span>
                                     <a href="{% url 'team_detail' team.uuid %}" class="team-link">Szczegóły</a>
                                 </div>
                             </div>
@@ -101,11 +263,384 @@
                 </div>
             {% else %}
                 <div class="empty-state">
-                    <p>Nie należysz jeszcze do żadnej grupy.</p>
+                    <div class="empty-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <p>Nie należysz jeszcze do żadnej grupy</p>
                     <a href="{% url 'create_team' %}" class="btn btn-primary">Utwórz pierwszą grupę</a>
                 </div>
             {% endif %}
         </div>
     </div>
+
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Ostatnie dokumenty</h2>
+            <a href="{% url 'document_list' %}" class="btn btn-sm btn-primary">Zobacz wszystkie</a>
+        </div>
+
+        <div class="section-content">
+            {% if recent_documents %}
+                <div class="documents-list">
+                    {% for document in recent_documents %}
+                        <div class="document-item">
+                            <div class="document-icon">
+                                {% if document.file_type == 'pdf' %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                {% elif document.file_type == 'doc' or document.file_type == 'docx' %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                {% elif document.file_type == 'jpg' or document.file_type == 'jpeg' or document.file_type == 'png' %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            <div class="document-info">
+                                <h3>{{ document.title }}</h3>
+                                <p>{{ document.description|truncatechars:80|default:"Brak opisu" }}</p>
+                                <div class="document-meta">
+                                    <span class="document-type">{{ document.file_type|upper }}</span>
+                                    <span class="document-date">{{ document.created_at|date:"d.m.Y" }}</span>
+                                    {% if document.ai_description %}
+                                        <span class="ai-badge">AI</span>
+                                    {% endif %}
+                                    <a href="{% url 'document_detail' document.uuid %}" class="document-link">Szczegóły</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <p>Nie masz jeszcze żadnych dokumentów</p>
+                    <a href="{% url 'create_document' %}" class="btn btn-primary">Dodaj pierwszy dokument</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
+
+<style>
+.quick-actions {
+    margin: 2rem 0;
+}
+
+.quick-actions h2 {
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.action-card {
+    background-color: rgba(31, 41, 55, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.action-card:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    background-color: rgba(31, 41, 55, 0.7);
+}
+
+.action-card.voice-action {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.action-card.voice-action:hover {
+    border-color: #10b981;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2));
+}
+
+.action-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.voice-action .action-icon {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.action-card h3 {
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.action-card p {
+    color: var(--gray-light);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.recent-calls-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.call-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: rgba(31, 41, 55, 0.3);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.call-info {
+    flex: 1;
+}
+
+.call-number {
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+}
+
+.call-message {
+    color: var(--gray-light);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.call-document {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--primary-light);
+    font-size: 0.75rem;
+}
+
+.call-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.status-badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-completed { background-color: rgba(34, 197, 94, 0.2); color: #22c55e; }
+.status-failed { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.status-busy { background-color: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+.status-no-answer { background-color: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+.status-in-progress { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
+.status-ringing { background-color: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+.confirmation-badge {
+    background-color: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    padding: 0.125rem 0.375rem;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.call-time {
+    color: var(--gray-light);
+    font-size: 0.75rem;
+}
+
+.project-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: rgba(31, 41, 55, 0.3);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 0.75rem;
+}
+
+.project-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.project-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.project-info {
+    flex: 1;
+}
+
+.project-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.project-documents {
+    color: var(--gray-light);
+    font-size: 0.875rem;
+}
+
+.documents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.document-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: rgba(31, 41, 55, 0.3);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.document-icon {
+    flex-shrink: 0;
+    color: var(--primary-light);
+}
+
+.document-info {
+    flex: 1;
+}
+
+.document-info h3 {
+    color: var(--white);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.document-info p {
+    color: var(--gray-light);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.document-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.document-type, .document-date {
+    color: var(--gray-light);
+    font-size: 0.75rem;
+}
+
+.ai-badge {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.375rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-light);
+}
+
+.empty-icon {
+    margin-bottom: 1rem;
+    color: var(--gray-light);
+}
+
+@media (max-width: 768px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .call-item, .project-item, .document-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .call-status {
+        align-items: flex-start;
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+}
+</style>
 {% endblock %}

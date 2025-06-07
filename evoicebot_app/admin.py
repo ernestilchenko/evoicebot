@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Project, Team, UserProfile, TeamMembership, Document
+from .models import Project, Team, UserProfile, TeamMembership, Document, VoiceCall
 
 
 # Register your models here.
@@ -167,13 +167,39 @@ class DocumentAdmin(admin.ModelAdmin):
             'fields': ('project', 'team', 'users')
         }),
         ('AI', {
-            'fields': ('ai_description', 'ai_audio', 'display_ai_audio')
-        }),
-        ('Podgląd', {
-            'fields': ('file_preview',)
+            'fields': ('ai_description', 'ai_audio',)
         }),
         ('Daty', {
             'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(VoiceCall)
+class VoiceCallAdmin(admin.ModelAdmin):
+    list_display = ('to_number', 'status', 'document', 'duration', 'confirmation_received', 'created_at')
+    list_filter = ('status', 'confirmation_received', 'created_at')
+    search_fields = ('to_number', 'from_number', 'message_text', 'sid')
+    readonly_fields = ('sid', 'created_at', 'updated_at', 'answered_at', 'ended_at')
+    date_hierarchy = 'created_at'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('document', 'user_profile')
+
+    fieldsets = (
+        ('Połączenie', {
+            'fields': ('sid', 'to_number', 'from_number', 'status', 'confirmation_received')
+        }),
+        ('Treść', {
+            'fields': ('message_text', 'document', 'user_profile')
+        }),
+        ('Szczegóły', {
+            'fields': ('duration', 'cost'),
+            'classes': ('collapse',)
+        }),
+        ('Daty', {
+            'fields': ('created_at', 'updated_at', 'answered_at', 'ended_at'),
             'classes': ('collapse',)
         }),
     )

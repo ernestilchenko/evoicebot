@@ -16,6 +16,13 @@
             </a>
         </div>
         <div class="header-actions">
+            <a href="{% url 'document_voice_notification' document.uuid %}" class="btn btn-outline btn-with-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                Powiadomienie głosowe
+            </a>
             <a href="{% url 'edit_document' document.uuid %}" class="btn btn-outline btn-with-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -288,6 +295,9 @@
                                     <div class="user-info">
                                         <h3>{{ user_profile.user.get_full_name|default:user_profile.user.username }}</h3>
                                         <span class="user-email">{{ user_profile.user.email }}</span>
+                                        {% if user_profile.phone %}
+                                            <span class="user-phone">{{ user_profile.phone }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% endfor %}
@@ -297,6 +307,46 @@
                     {% endif %}
                 </div>
             </div>
+
+            {% if document.voice_calls.exists %}
+                <div class="detail-section">
+                    <h2>Historia połączeń głosowych</h2>
+                    <div class="voice-calls-history">
+                        {% for call in document.voice_calls.all|slice:":5" %}
+                            <div class="voice-call-item">
+                                <div class="call-info">
+                                    <div class="call-number">{{ call.to_number }}</div>
+                                    <div class="call-status">
+                                        <span class="status-badge status-{{ call.status }}">
+                                            {% if call.status == 'completed' %}Zakończone
+                                            {% elif call.status == 'failed' %}Nieudane
+                                            {% elif call.status == 'busy' %}Zajęty
+                                            {% elif call.status == 'no-answer' %}Brak odpowiedzi
+                                            {% else %}{{ call.status|title }}{% endif %}
+                                        </span>
+                                        {% if call.confirmation_received %}
+                                            <span class="confirmation-badge">✓ Potwierdzone</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="call-meta">
+                                    <span class="call-date">{{ call.created_at|date:"d.m.Y H:i" }}</span>
+                                    {% if call.duration %}
+                                        <span class="call-duration">{{ call.duration }}s</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% if document.voice_calls.count > 5 %}
+                            <div class="view-all-calls">
+                                <a href="{% url 'voice_call_list' %}?document={{ document.uuid }}" class="btn btn-sm btn-outline">
+                                    Zobacz wszystkie połączenia ({{ document.voice_calls.count }})
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
 
             {% if file_exists %}
                 {% if document.file_type == 'jpg' or document.file_type == 'jpeg' or document.file_type == 'png' %}
@@ -392,6 +442,96 @@
 
         .document-deadline.expires-soon {
             color: #f59e0b;
+        }
+
+        .user-phone {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--gray-light);
+            margin-top: 0.25rem;
+        }
+
+        .voice-calls-history {
+            background-color: rgba(31, 41, 55, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .voice-call-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .voice-call-item:last-child {
+            border-bottom: none;
+        }
+
+        .call-info {
+            flex: 1;
+        }
+
+        .call-number {
+            font-weight: 500;
+            color: var(--white);
+            margin-bottom: 0.25rem;
+        }
+
+        .call-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-completed { background-color: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .status-failed { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .status-busy { background-color: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .status-no-answer { background-color: rgba(156, 163, 175, 0.2); color: #9ca3af; }
+
+        .confirmation-badge {
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.75rem;
+            background-color: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .call-meta {
+            text-align: right;
+            color: var(--gray-light);
+            font-size: 0.875rem;
+        }
+
+        .call-duration {
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .view-all-calls {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header-actions {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .voice-call-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
         }
     </style>
 {% endblock %}

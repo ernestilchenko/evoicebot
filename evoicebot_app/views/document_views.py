@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from ..forms import DocumentForm
 from ..models import Document, UserProfile, Project, Team
-from ..tasks import process_document_ai, generate_document_audio
+from evoicebot_app.tasks import process_document_ai, generate_document_audio
 
 
 @login_required
