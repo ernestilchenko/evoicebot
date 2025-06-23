@@ -13,10 +13,10 @@ import json
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
 from django.contrib import staticfiles
 from dotenv import load_dotenv
 from google.oauth2 import service_account
-from celery.schedules import crontab
 
 load_dotenv()
 
@@ -26,7 +26,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-l2)*ifxw)j)h5e!0)^!)7zsas)
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['voicebot.fun', 'www.voicebot.fun', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['voicebot.fun', 'www.voicebot.fun', 'localhost', '127.0.0.1',
+                 'evoicebot-production.up.railway.app']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://voicebot.fun',
@@ -35,6 +36,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://www.voicebot.fun',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'https://evoicebot-production.up.railway.app'
 ]
 
 INSTALLED_APPS = [
