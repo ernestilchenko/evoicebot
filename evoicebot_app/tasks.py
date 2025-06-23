@@ -18,39 +18,103 @@ from .utils.twilio_utils import create_voice_message, get_document_recipients_ph
 def process_document_ai(document_id, generate_audio=False):
     try:
         document = Document.objects.get(id=document_id)
+        print(f"[TASK] Processing document {document.title} (ID: {document_id})")
+        print(f"[TASK] Generate audio parameter: {generate_audio} (type: {type(generate_audio)})")
 
         if document.file:
             file_type = os.path.splitext(document.file.name)[1][1:].lower()
+            print(f"[TASK] File type: {file_type}")
+            print(f"[TASK] File path: {document.file.name}")
 
             ai_description = analyze_document(document.file, file_type)
             if ai_description:
                 document.ai_description = ai_description
                 document.save()
+                print(f"[TASK] AI description generated: {len(ai_description)} characters")
+                print(f"[TASK] Description preview: {ai_description[:100]}...")
 
                 if generate_audio:
-                    result = generate_speech(ai_description)
-                    filename = f"audio_{document.uuid}.wav"
-                    document.ai_audio.save(filename, ContentFile(result["audio_data"]), save=True)
+                    print("[TASK] Starting audio generation...")
+                    try:
+                        result = generate_speech(ai_description)
+                        if result and "audio_data" in result:
+                            filename = f"audio_{document.uuid}.wav"
+                            print(f"[TASK] Saving audio as: {filename}")
+                            print(f"[TASK] Audio data size: {len(result['audio_data'])} bytes")
 
-        return f"Document {document.title} processed successfully"
+                            document.ai_audio.save(filename, ContentFile(result["audio_data"]), save=True)
+                            print(f"[TASK] Audio saved successfully to: {document.ai_audio.name}")
+                        else:
+                            print("[TASK] ERROR: No audio data received from generate_speech")
+
+                    except Exception as audio_error:
+                        print(f"[TASK] Audio generation failed: {str(audio_error)}")
+                        import traceback
+                        print(f"[TASK] Audio error traceback: {traceback.format_exc()}")
+                        # Не поднимаем исключение, чтобы не сломать обработку документа
+                else:
+                    print("[TASK] Audio generation skipped (generate_audio=False)")
+            else:
+                print("[TASK] ERROR: AI description generation failed")
+        else:
+            print("[TASK] ERROR: No file found for document")
+
+        final_status = f"Document {document.title} processed successfully"
+        print(f"[TASK] {final_status}")
+        return final_status
+
+    except Document.DoesNotExist:
+        error_msg = f"Document with ID {document_id} not found"
+        print(f"[TASK ERROR] {error_msg}")
+        return error_msg
     except Exception as e:
-        return f"Error processing document: {str(e)}"
+        error_msg = f"Error processing document: {str(e)}"
+        print(f"[TASK ERROR] {error_msg}")
+        import traceback
+        print(f"[TASK ERROR] Traceback: {traceback.format_exc()}")
+        return error_msg
 
 
 @shared_task
 def generate_document_audio(document_id):
     try:
         document = Document.objects.get(id=document_id)
+        print(f"[AUDIO TASK] Generating audio for document {document.title} (ID: {document_id})")
 
         if document.ai_description and not document.ai_audio:
-            result = generate_speech(document.ai_description)
-            filename = f"audio_{document.uuid}.wav"
-            document.ai_audio.save(filename, ContentFile(result["audio_data"]), save=True)
-            return f"Audio generated for document {document.title}"
+            print(f"[AUDIO TASK] Description length: {len(document.ai_description)} characters")
+            print(f"[AUDIO TASK] Description preview: {document.ai_description[:100]}...")
 
-        return "No description found or audio already exists"
+            result = generate_speech(document.ai_description)
+            if result and "audio_data" in result:
+                filename = f"audio_{document.uuid}.wav"
+                print(f"[AUDIO TASK] Saving audio as: {filename}")
+                print(f"[AUDIO TASK] Audio data size: {len(result['audio_data'])} bytes")
+
+                document.ai_audio.save(filename, ContentFile(result["audio_data"]), save=True)
+                print(f"[AUDIO TASK] Audio saved successfully to: {document.ai_audio.name}")
+                return f"Audio generated for document {document.title}"
+            else:
+                print("[AUDIO TASK] ERROR: No audio data received from generate_speech")
+                return "Failed to generate audio - no data received"
+        else:
+            if not document.ai_description:
+                print("[AUDIO TASK] No AI description found")
+                return "No description found"
+            if document.ai_audio:
+                print("[AUDIO TASK] Audio already exists")
+                return "Audio already exists"
+
+    except Document.DoesNotExist:
+        error_msg = f"Document with ID {document_id} not found"
+        print(f"[AUDIO TASK ERROR] {error_msg}")
+        return error_msg
     except Exception as e:
-        return f"Error generating audio: {str(e)}"
+        error_msg = f"Error generating audio: {str(e)}"
+        print(f"[AUDIO TASK ERROR] {error_msg}")
+        import traceback
+        print(f"[AUDIO TASK ERROR] Traceback: {traceback.format_exc()}")
+        return error_msg
 
 
 @shared_task

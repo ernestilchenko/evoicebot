@@ -6,11 +6,8 @@
 {% block dashboard_content %}
     <div class="dashboard-header">
         <div class="header-back">
-            <a href="
-                    {% if form.instance.pk %}{% url 'document_detail' form.instance.uuid %}{% else %}{% url 'document_list' %}{% endif %}"
-               class="back-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <a href="{% if form.instance.pk %}{% url 'document_detail' form.instance.uuid %}{% else %}{% url 'document_list' %}{% endif %}" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
@@ -22,19 +19,16 @@
     <div class="form-container">
         <div class="form-header">
             <h2>{% if form.instance.pk %}Edytuj dokument{% else %}Utwórz nowy dokument{% endif %}</h2>
-            <p>{% if form.instance.pk %}Zmień dane dokumentu{% else %}Wypełnij formularz, aby utworzyć nowy
-                dokument{% endif %}</p>
+            <p>{% if form.instance.pk %}Zmień dane dokumentu{% else %}Wypełnij formularz, aby utworzyć nowy dokument{% endif %}</p>
         </div>
 
-        <form method="post" enctype="multipart/form-data" class="form-custom server-submit" action="
-                {% if form.instance.pk %}{% url 'edit_document' form.instance.uuid %}{% else %}{% url 'create_document' %}{% endif %}">
+        <form method="post" enctype="multipart/form-data" class="form-custom server-submit" action="{% if form.instance.pk %}{% url 'edit_document' form.instance.uuid %}{% else %}{% url 'create_document' %}{% endif %}">
             {% csrf_token %}
 
             {% if form.errors %}
                 <div class="form-errors">
                     <div class="error-message">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="12" y1="8" x2="12" y2="12"></line>
                             <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -49,8 +43,7 @@
 
             <div class="form-group {% if form.title.errors %}has-error{% endif %}">
                 <label for="{{ form.title.id_for_label }}" class="form-label">Tytuł dokumentu*</label>
-                <input type="text" name="title" id="{{ form.title.id_for_label }}" class="form-control" required
-                       value="{{ form.title.value|default:'' }}">
+                <input type="text" name="title" id="{{ form.title.id_for_label }}" class="form-control" required value="{{ form.title.value|default:'' }}">
                 {% if form.title.errors %}
                     <div class="input-error">{{ form.title.errors.0 }}</div>
                 {% endif %}
@@ -59,8 +52,7 @@
 
             <div class="form-group {% if form.description.errors %}has-error{% endif %}">
                 <label for="{{ form.description.id_for_label }}" class="form-label">Opis</label>
-                <textarea name="description" id="{{ form.description.id_for_label }}" class="form-control"
-                          rows="4">{{ form.description.value|default:'' }}</textarea>
+                <textarea name="description" id="{{ form.description.id_for_label }}" class="form-control" rows="4">{{ form.description.value|default:'' }}</textarea>
                 {% if form.description.errors %}
                     <div class="input-error">{{ form.description.errors.0 }}</div>
                 {% endif %}
@@ -70,12 +62,9 @@
             <div class="form-group {% if form.deadline.errors %}has-error{% endif %}">
                 <label for="{{ form.deadline.id_for_label }}" class="form-label">Termin ważności</label>
                 <div class="date-picker-container">
-                    <input type="date" name="deadline" id="{{ form.deadline.id_for_label }}"
-                           class="form-control datepicker"
-                           value="{{ form.deadline.value|date:'Y-m-d'|default:'' }}">
+                    <input type="date" name="deadline" id="{{ form.deadline.id_for_label }}" class="form-control datepicker" value="{{ form.deadline.value|date:'Y-m-d'|default:'' }}">
                     <span class="date-picker-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -92,19 +81,15 @@
             {% if form.instance.ai_description %}
                 <div class="form-group">
                     <label class="form-label">Opis wygenerowany przez AI</label>
-                    <div class="ai-description-box"
-                         style="background-color: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(99, 102, 241, 0.3);">
+                    <div class="ai-description-box" style="background-color: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(99, 102, 241, 0.3);">
                         {{ form.instance.ai_description }}
                     </div>
-                    <div class="form-hint">Ten opis został automatycznie wygenerowany na podstawie zawartości
-                        dokumentu.
-                    </div>
+                    <div class="form-hint">Ten opis został automatycznie wygenerowany na podstawie zawartości dokumentu.</div>
                 </div>
             {% endif %}
 
             <div class="form-group {% if form.file.errors %}has-error{% endif %}">
-                <label for="{{ form.file.id_for_label }}" class="form-label">Plik dokumentu{% if not form.instance.pk %}
-                    *{% endif %}</label>
+                <label for="{{ form.file.id_for_label }}" class="form-label">Plik dokumentu{% if not form.instance.pk %}*{% endif %}</label>
                 <div class="file-upload-container">
                     <div class="file-preview" {% if not form.instance.file %}style="display: none;"{% endif %}>
                         {% if form.instance.file %}
@@ -112,9 +97,7 @@
                                 <img src="{{ form.instance.file.url }}" alt="Podgląd pliku">
                             {% else %}
                                 <div class="file-preview-info">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                         <polyline points="14 2 14 8 20 8"></polyline>
                                     </svg>
@@ -124,17 +107,13 @@
                         {% endif %}
                     </div>
                     <div class="file-input-wrapper">
-                        <input type="file" name="file" id="{{ form.file.id_for_label }}"
-                               {% if not form.instance.pk %}required{% endif %}>
+                        <input type="file" name="file" id="{{ form.file.id_for_label }}" {% if not form.instance.pk %}required{% endif %}>
                         <div class="file-overlay">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                 stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                                 <polyline points="13 2 13 9 20 9"></polyline>
                             </svg>
-                            <span>{% if form.instance.pk %}Zmień plik lub przeciągnij tutaj{% else %}Wybierz plik lub
-                                przeciągnij tutaj{% endif %}</span>
+                            <span>{% if form.instance.pk %}Zmień plik lub przeciągnij tutaj{% else %}Wybierz plik lub przeciągnij tutaj{% endif %}</span>
                         </div>
                     </div>
                 </div>
@@ -144,22 +123,35 @@
                 <div class="form-hint">Akceptowane formaty: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, itd.</div>
             </div>
 
-            <!-- AI Audio Option -->
             <div class="form-group">
                 <div class="checkbox-wrapper">
-                    <input type="checkbox" id="generate_audio" name="generate_audio" class="checkbox-input"
-                           {% if form.instance.ai_audio %}checked disabled{% endif %}>
+                    <input type="checkbox" id="generate_audio" name="generate_audio" class="checkbox-input">
                     <label for="generate_audio" class="checkbox-label">
                         <span class="checkbox-custom"></span>
                         Wygeneruj nagranie audio (Text-to-Speech)
                     </label>
                 </div>
-                <div class="form-hint">Automatycznie wygeneruje nagranie głosowe na podstawie opisu dokumentu.</div>
+
+                {% if form.instance.ai_description %}
+                    {% if form.instance.ai_audio %}
+                        <div class="form-hint" style="color: #10b981;">
+                            ✅ Dokument ma opis AI i nagranie audio. Zaznaczenie opcji przy nowym pliku zastąpi istniejące nagranie.
+                        </div>
+                    {% else %}
+                        <div class="form-hint" style="color: #f59e0b;">
+                            📄 Dokument ma opis AI ale brak nagrania. Możesz wygenerować audio bez uploadowania nowego pliku.
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="form-hint" style="color: #ef4444;">
+                        ❌ Brak opisu AI. Upload nowego pliku z zaznaczoną opcją wygeneruje opis i audio.
+                    </div>
+                {% endif %}
 
                 {% if form.instance.ai_audio %}
                     <div class="audio-preview" style="margin-top: 1rem;">
-                        <p>Aktualne nagranie:</p>
-                        <audio controls>
+                        <p style="margin-bottom: 0.5rem; font-weight: 500; color: var(--white);">Aktualne nagranie:</p>
+                        <audio controls style="width: 100%;">
                             <source src="{{ form.instance.ai_audio.url }}" type="audio/wav">
                             Twoja przeglądarka nie obsługuje odtwarzania plików audio.
                         </audio>
@@ -172,8 +164,7 @@
                 <select name="project" id="{{ form.project.id_for_label }}" class="form-control">
                     <option value="" {% if not form.project.value %}selected{% endif %}>-- Brak --</option>
                     {% for project in form.fields.project.queryset %}
-                        <option value="{{ project.id }}"
-                                {% if form.project.value|stringformat:"i" == project.id|stringformat:"i" %}selected{% endif %}>{{ project.name }}</option>
+                        <option value="{{ project.id }}" {% if form.project.value|stringformat:"i" == project.id|stringformat:"i" %}selected{% endif %}>{{ project.name }}</option>
                     {% endfor %}
                 </select>
                 {% if form.project.errors %}
@@ -187,8 +178,7 @@
                 <select name="team" id="{{ form.team.id_for_label }}" class="form-control">
                     <option value="" {% if not form.team.value %}selected{% endif %}>-- Brak --</option>
                     {% for team in form.fields.team.queryset %}
-                        <option value="{{ team.id }}"
-                                {% if form.team.value|stringformat:"i" == team.id|stringformat:"i" %}selected{% endif %}>{{ team.name }}</option>
+                        <option value="{{ team.id }}" {% if form.team.value|stringformat:"i" == team.id|stringformat:"i" %}selected{% endif %}>{{ team.name }}</option>
                     {% endfor %}
                 </select>
                 {% if form.team.errors %}
@@ -202,10 +192,7 @@
                 <div class="users-select-container">
                     <select name="users" id="{{ form.users.id_for_label }}" class="form-control select2" multiple>
                         {% for user_profile in form.fields.users.queryset %}
-                            <option value="{{ user_profile.id }}"
-                                    {% if user_profile.id in form.users.value %}selected{% endif %}>{{ user_profile.user.username }}
-                                ({{ user_profile.user.email }})
-                            </option>
+                            <option value="{{ user_profile.id }}" {% if user_profile.id in form.users.value %}selected{% endif %}>{{ user_profile.user.username }} ({{ user_profile.user.email }})</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -250,7 +237,6 @@
             cursor: pointer;
         }
 
-        /* Niestandardowy styl dla kalendarza po otwarciu (działa tylko w niektórych przeglądarkach) */
         input[type="date"]::-webkit-datetime-edit {
             color: var(--white);
         }
@@ -265,7 +251,6 @@
     <script src="{% static 'js/dashboard.js' %}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Inicjalizacja Select2 dla wyboru użytkowników
             if (typeof $.fn.select2 !== 'undefined') {
                 $('.select2').select2({
                     placeholder: "Wybierz użytkowników",
@@ -274,19 +259,14 @@
                 });
             }
 
-            // File upload causes audio checkbox to be enabled
             const fileInput = document.querySelector('input[type="file"]');
             const audioCheckbox = document.getElementById('generate_audio');
+            const hasExistingAudio = {% if form.instance.ai_audio %}true{% else %}false{% endif %};
 
-            if (fileInput && audioCheckbox && audioCheckbox.disabled) {
-                fileInput.addEventListener('change', function () {
-                    if (this.files.length > 0) {
-                        audioCheckbox.disabled = false;
-                    }
-                });
+            if (hasExistingAudio) {
+                audioCheckbox.checked = false;
             }
 
-            // Niestandardowy DatePicker (jeśli jest dostępny flatpickr lub podobna biblioteka)
             if (typeof flatpickr !== 'undefined') {
                 flatpickr(".datepicker", {
                     dateFormat: "Y-m-d",
